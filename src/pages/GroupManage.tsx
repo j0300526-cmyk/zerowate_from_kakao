@@ -1,6 +1,7 @@
 import React from "react";
+import Dialog from "../components/Dialog";
 import { Mission } from "../types";
-import { Plus, X } from "lucide-react";
+import { Plus } from "lucide-react";
 
 interface Props {
   myGroupMissions: Mission[];
@@ -56,13 +57,13 @@ export default function GroupManagePage({
   };
 
   return (
-    <div className="bg-white px-6 py-4 rounded-3xl">
-      <div className="flex flex-col items-start gap-3 mb-6">
-        <h2 className="text-2xl font-bold">그룹 미션 관리</h2>
+    <div className="page">
+      <div className="page-header group-page-header">
+        <div><p className="eyebrow">함께하면 더 오래</p><h1>우리의 초록 습관</h1><p className="page-description">서로의 실천을 응원하는 작은 모임.</p></div>
         {onCreateGroup && (
           <button
             onClick={() => setShowCreateModal(true)}
-            className="flex w-full items-center justify-center gap-2 px-4 py-2 bg-green-500 text-white rounded-full text-sm font-medium hover:bg-green-600 transition-colors"
+            className="primary-button"
           >
             <Plus size={18} />
             그룹 만들기
@@ -72,15 +73,16 @@ export default function GroupManagePage({
 
       <div className="mb-6">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-bold">내가 참여중인 그룹 미션</h3>
+          <h3 className="text-lg font-bold">참여 중인 그룹</h3>
           <span className="text-sm text-gray-500">{myGroupMissions.length}개</span>
         </div>
 
         <div className="space-y-3">
+          {myGroupMissions.length === 0 && <div className="empty-state"><p>아직 참여 중인 그룹이 없어요.</p><span>새 그룹을 만들거나 추천 그룹에 참여해 보세요.</span></div>}
           {myGroupMissions.map((mission) => {
             const isOwner = currentUserId !== undefined && mission.created_by === currentUserId;
             return (
-              <div key={mission.id} className="bg-gray-50 rounded-3xl p-4">
+              <div key={mission.id} className="surface p-5">
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex items-center gap-3">
                     <div className={`w-12 h-12 ${mission.color} rounded-full`} />
@@ -125,7 +127,7 @@ export default function GroupManagePage({
         <h3 className="text-lg font-bold mb-4">추천 그룹 미션</h3>
         <div className="space-y-3">
           {recommendedMissions.map((m) => (
-            <div key={m.id} className="bg-gradient-to-r from-gray-50 to-white rounded-3xl p-4 border border-gray-100">
+            <div key={m.id} className="surface p-5">
               <div className="flex items-center gap-3 mb-2">
                 <div className={`w-10 h-10 ${m.color} rounded-full`} />
                 <div>
@@ -138,9 +140,9 @@ export default function GroupManagePage({
                 onClick={() => joinGroup(m)}
                 className={`w-full py-2 rounded-3xl text-sm font-medium border ${
                   isInMyGroups(m.id)
-                    ? "bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed"
+                    ? "bg-gray-100 text-gray-500 border-gray-200 cursor-not-allowed"
                     : m.participants.length >= 3
-                    ? "bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed"
+                    ? "bg-gray-100 text-gray-500 border-gray-200 cursor-not-allowed"
                     : "bg-white text-green-600 border-gray-200 hover:bg-green-50"
                 }`}
               >
@@ -152,24 +154,13 @@ export default function GroupManagePage({
       </div>
 
       {/* 그룹 생성 모달 */}
-      {showCreateModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-3xl p-6 w-full max-w-sm mx-4">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-xl font-bold">새 그룹 만들기</h3>
-              <button
-                onClick={() => setShowCreateModal(false)}
-                className="text-gray-400 hover:text-gray-600"
-              >
-                <X size={24} />
-              </button>
-            </div>
-
+      <Dialog open={showCreateModal} onClose={() => setShowCreateModal(false)} title="새 그룹 만들기" description="함께 실천할 모임에 이름을 붙여주세요.">
             <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="group-name" className="block text-sm font-medium text-gray-700 mb-2">
                 그룹 이름
               </label>
               <input
+                id="group-name"
                 type="text"
                 value={groupName}
                 onChange={(e) => setGroupName(e.target.value)}
@@ -184,9 +175,11 @@ export default function GroupManagePage({
                 그룹 색상
               </label>
               <div className="flex gap-3 flex-wrap">
-                {colors.map((color) => (
+                {colors.map((color, index) => (
                   <button
                     key={color}
+                    aria-label={`${["파랑", "초록", "보라", "분홍", "노랑", "주황"][index]} 그룹 색상`}
+                    aria-pressed={selectedColor === color}
                     onClick={() => setSelectedColor(color)}
                     className={`w-12 h-12 ${color} rounded-full border-4 transition-all ${
                       selectedColor === color
@@ -212,15 +205,14 @@ export default function GroupManagePage({
                 className={`flex-1 py-3 rounded-2xl font-medium text-white ${
                   !groupName.trim() || isCreating
                     ? "bg-gray-300 cursor-not-allowed"
-                    : "bg-green-500 hover:bg-green-600"
+                    : "bg-green-700 hover:bg-green-800"
                 }`}
               >
                 {isCreating ? "생성 중..." : "만들기"}
               </button>
             </div>
-          </div>
-        </div>
-      )}
+      </Dialog>
     </div>
   );
 }
+

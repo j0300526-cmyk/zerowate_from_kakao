@@ -1,6 +1,7 @@
 // src/pages/Ranking.tsx
 import React, { useState, useEffect } from "react";
 import { Trophy, Medal, Award, Crown } from "lucide-react";
+import SegmentedControl from "../components/SegmentedControl";
 import { rankingApi } from "../api/ranking";
 import type { RankingUser, GroupRanking } from "../api/types";
 
@@ -68,7 +69,7 @@ export default function RankingPage({
 
   const getRankIcon = (rank: number) => {
     if (rank === 1) return <Crown className="text-yellow-500" size={24} />;
-    if (rank === 2) return <Trophy className="text-gray-400" size={22} />;
+    if (rank === 2) return <Trophy className="text-gray-500" size={22} />;
     if (rank === 3) return <Medal className="text-orange-400" size={22} />;
     return null;
   };
@@ -81,15 +82,15 @@ export default function RankingPage({
   };
 
   return (
-    <div className="bg-white px-6 py-6 min-h-screen rounded-3xl">
+    <div className="page">
       {/* 헤더 */}
-      <div className="mb-6">
-        <h2 className="text-2xl font-bold mb-2">리더보드</h2>
-        <p className="text-sm text-gray-500">친환경 실천 랭킹을 확인해보세요!</p>
+      <div className="page-header">
+        <div><p className="eyebrow">함께 쌓은 변화</p><h1>리더보드</h1>
+        <p className="text-sm text-gray-500">꾸준히 실천하는 우리, 함께 더 멀리.</p></div>
       </div>
 
       {/* 내 순위 카드 */}
-      <div className="bg-gradient-to-r from-green-50 to-green-100 rounded-3xl p-5 mb-6 border-2 border-green-200">
+      <div className="surface ranking-summary p-5 mb-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             <div className="relative">
@@ -116,29 +117,8 @@ export default function RankingPage({
         </div>
       </div>
 
-      {/* 탭 버튼 */}
-      <div className="flex gap-3 mb-6">
-        <button
-          onClick={() => setActiveTab("personal")}
-          className={`flex-1 py-3 rounded-full text-sm font-medium transition-all ${
-            activeTab === "personal"
-              ? "bg-green-500 text-white shadow-md"
-              : "bg-gray-100 text-gray-600"
-          }`}
-        >
-          개인 랭킹
-        </button>
-        <button
-          onClick={() => setActiveTab("group")}
-          className={`flex-1 py-3 rounded-full text-sm font-medium transition-all ${
-            activeTab === "group"
-              ? "bg-green-500 text-white shadow-md"
-              : "bg-gray-100 text-gray-600"
-          }`}
-        >
-          그룹 랭킹
-        </button>
-      </div>
+      <SegmentedControl<"personal" | "group"> label="랭킹 종류" value={activeTab} onChange={setActiveTab}
+        options={[{ value: "personal", label: "개인 랭킹" }, { value: "group", label: "그룹 랭킹" }]} />
 
       {/* 개인 랭킹 */}
       {activeTab === "personal" && (
@@ -149,7 +129,7 @@ export default function RankingPage({
           </div>
 
           {loading ? (
-            <div className="text-center py-12 text-gray-400">
+            <div className="text-center py-12 text-gray-500">
               랭킹을 불러오는 중...
             </div>
           ) : error ? (
@@ -157,7 +137,7 @@ export default function RankingPage({
               {error}
             </div>
           ) : personalRankings.length === 0 ? (
-            <div className="text-center py-12 text-gray-400">
+            <div className="text-center py-12 text-gray-500">
               랭킹 데이터가 없습니다.
             </div>
           ) : (
@@ -168,7 +148,7 @@ export default function RankingPage({
             return (
               <div
                 key={user.id}
-                className={`rounded-3xl p-4 border-2 transition-all ${
+                className={`ranking-row rounded-3xl p-4 border ${
                   isMe
                     ? "bg-gradient-to-r from-green-50 to-white border-green-300 shadow-md"
                     : getRankColor(rank)
@@ -179,7 +159,7 @@ export default function RankingPage({
                     {/* 순위 표시 */}
                     <div className="w-12 flex items-center justify-center">
                       {getRankIcon(rank) || (
-                        <span className="text-xl font-bold text-gray-400">#{rank}</span>
+                        <span className="text-xl font-bold text-gray-500">#{rank}</span>
                       )}
                     </div>
 
@@ -228,7 +208,7 @@ export default function RankingPage({
           </div>
 
           {loading ? (
-            <div className="text-center py-12 text-gray-400">
+            <div className="text-center py-12 text-gray-500">
               랭킹을 불러오는 중...
             </div>
           ) : error ? (
@@ -236,7 +216,7 @@ export default function RankingPage({
               {error}
             </div>
           ) : groupRankings.length === 0 ? (
-            <div className="text-center py-12 text-gray-400">
+            <div className="text-center py-12 text-gray-500">
               그룹 랭킹 데이터가 없습니다.
             </div>
           ) : (
@@ -246,14 +226,14 @@ export default function RankingPage({
             return (
               <div
                 key={group.id}
-                className={`rounded-3xl p-4 border-2 transition-all ${getRankColor(rank)}`}
+                className={`ranking-row rounded-3xl p-4 border ${getRankColor(rank)}`}
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-4">
                     {/* 순위 표시 */}
                     <div className="w-12 flex items-center justify-center">
                       {getRankIcon(rank) || (
-                        <span className="text-xl font-bold text-gray-400">#{rank}</span>
+                        <span className="text-xl font-bold text-gray-500">#{rank}</span>
                       )}
                     </div>
 
@@ -293,3 +273,4 @@ export default function RankingPage({
     </div>
   );
 }
+

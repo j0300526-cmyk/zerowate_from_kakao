@@ -1,11 +1,11 @@
 import React from "react";
-import { Plus, X } from "lucide-react";
+import { Plus, X, Leaf } from "lucide-react";
 import Confetti from "react-confetti";
+import SegmentedControl from "../components/SegmentedControl";
+import { useReducedMotion } from "../hooks/useReducedMotion";
 import { CatalogMission, Mission, PersonalMissionEntry, WeekDay } from "../types";
-import { isTodayMonday } from "../utils/date";
 import { groupMissionApi } from "../api/groupMission";
 import { saveDayMissions, loadDayMissions, saveWeeklyRoutineCompletion } from "../utils/personalMissionsStorage";
-import { safeStorage } from "../storage";
 
 interface Props {
   userName: string;
@@ -49,26 +49,11 @@ export default function HomePage({
   onProfileClick,
   loadDay,
 }: Props) {
+  const reducedMotion = useReducedMotion();
   const [checkedMissions, setCheckedMissions] = React.useState<Record<number, boolean>>({});
   const [personalMissionChecked, setPersonalMissionChecked] = React.useState<Record<string, boolean>>({});
-  const [showAnnouncement, setShowAnnouncement] = React.useState(false);
   const [showConfetti, setShowConfetti] = React.useState(false);
   const [windowSize, setWindowSize] = React.useState({ width: 0, height: 0 });
-
-  // 공지사항 표시 여부 확인
-  React.useEffect(() => {
-    const checkAnnouncement = async () => {
-      try {
-        const dismissed = await safeStorage.get("announcement_dismissed");
-        if (!dismissed) {
-          setShowAnnouncement(true);
-        }
-      } catch (error) {
-        console.error("공지사항 상태 확인 실패:", error);
-      }
-    };
-    checkAnnouncement();
-  }, []);
 
   // 윈도우 크기 설정
   React.useEffect(() => {
@@ -79,16 +64,6 @@ export default function HomePage({
     window.addEventListener("resize", updateSize);
     return () => window.removeEventListener("resize", updateSize);
   }, []);
-
-  const handleCloseAnnouncement = async () => {
-    try {
-      await safeStorage.set("announcement_dismissed", "true");
-      setShowAnnouncement(false);
-    } catch (error) {
-      console.error("공지사항 닫기 실패:", error);
-      setShowAnnouncement(false);
-    }
-  };
 
   const getMissionKey = (missionEntry: PersonalMissionEntry) =>
     `${missionEntry.missionId}::${missionEntry.submission}`;
@@ -220,103 +195,56 @@ export default function HomePage({
   }, [selectedDate, activeTab, currentMissions, myGroupMissions]);
 
   return (
-    <div className="px-6 py-6 rounded-3xl">
+    <div className="page home-page">
       {/* 폭죽 효과 */}
-      {showConfetti && (
+      {showConfetti && !reducedMotion && (
         <Confetti
           width={windowSize.width}
           height={windowSize.height}
           recycle={false}
-          numberOfPieces={200}
+          numberOfPieces={48}
           gravity={0.3}
         />
       )}
       
-      {/* 공지사항 */}
-      {showAnnouncement && (
-        <div className="mb-4 p-4 bg-green-50 border border-green-200 rounded-2xl relative">
-          <button
-            onClick={handleCloseAnnouncement}
-            className="absolute top-2 right-2 text-gray-400 hover:text-gray-600 transition-colors"
-            aria-label="공지사항 닫기"
-          >
-            <X size={20} />
-          </button>
-          <div className="pr-6">
-            <h3 className="text-sm font-bold text-green-900 mb-1">공지사항</h3>
-            <div className="text-xs text-green-800 space-y-1">
-              <p>
-                가이드 바로가기 👉{" "}
-                <a 
-                  href="https://general-muscari-e49.notion.site/2b8225bc650480a98973df74230f3f1f?pvs=143" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="text-green-600 underline hover:text-green-700"
-                >
-                  https://general-muscari-e49.notion.site/2b8225bc650480a98973df74230f3f1f?pvs=143
-                </a>
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* 상단 헤더 */}
-      <div className="flex justify-between items-center mb-6">
+      <header className="page-header">
         <div>
-          <div className="text-base text-gray-700 mb-1">
-            {selectedDate ? formatDate() : "날짜를 선택해주세요"}
-          </div>
-          <div className="text-xl font-bold">
-            미션 <span className="text-red-500">{currentStreak}</span>일째
-          </div>
+          <p className="eyebrow">나의 작은 실천</p>
+          <h1>오늘도, 가볍게 초록.</h1>
+          <p className="page-description">{userName || "사용자"}님, 나만의 속도로 이어가요.</p>
         </div>
-
-        {/* 프로필 버튼 */}
-        <button
-          onClick={onProfileClick}
-          className={`w-12 h-12 ${profileColor} rounded-full flex items-center justify-center text-white text-lg font-bold hover:shadow-md transition-shadow`}
-        >
+        <button onClick={onProfileClick} aria-label="내 프로필 보기" className={`profile-avatar ${profileColor}`}>
           {userName ? userName.charAt(0) : "?"}
         </button>
-      </div>
+      </header>
 
-      {/* 탭 버튼 */}
-      <div className="flex justify-between gap-3 mb-6">
-        <button
-          onClick={() => setActiveTab("personal")}
-          className={`flex-1 py-2.5 rounded-full text-sm font-medium transition-all ${
-            activeTab === "personal"
-              ? "bg-gray-100 text-gray-700"
-              : "bg-white text-gray-400 border border-gray-200"
-          }`}
-        >
-          개인 루틴
-        </button>
-        <button
-          onClick={() => setActiveTab("group")}
-          className={`flex-1 py-2.5 rounded-full text-sm font-medium transition-all ${
-            activeTab === "group"
-              ? "bg-gray-100 text-gray-700"
-              : "bg-white text-gray-400 border border-gray-200"
-          }`}
-        >
-          그룹 미션
-        </button>
-      </div>
+      <section className="routine-summary" aria-label="루틴 현황">
+        <div className="summary-copy">
+          <span className="summary-label"><Leaf size={16} aria-hidden="true" /> 꾸준함이 만드는 변화</span>
+          <p><strong>{currentStreak}</strong><span>일째 함께하는 중</span></p>
+          <span className="summary-caption">작은 습관 하나가 내일을 바꿔요.</span>
+        </div>
+        <div className="summary-symbol" aria-hidden="true"><Leaf size={44} strokeWidth={1.3} /></div>
+      </section>
 
+      <SegmentedControl<"personal" | "group"> label="미션 종류" value={activeTab} onChange={setActiveTab}
+        options={[{ value: "personal", label: "개인 루틴" }, { value: "group", label: "그룹 미션" }]} />
+
+      <p className="calendar-caption">{selectedDate ? formatDate() : "날짜를 선택해 주세요"}</p>
       {/* 주간 달력 */}
-      <div className="flex justify-between gap-2 mb-8">
+      <div className="week-calendar" role="group" aria-label="날짜 선택">
         {weekDays.map((day) => (
           <button
             key={day.fullDate}
             onClick={() => setSelectedDate(day.fullDate)}
-            className={`flex flex-col items-center justify-center w-full h-20 rounded-3xl transition-all relative ${
+            aria-pressed={selectedDate === day.fullDate}
+            aria-label={`${day.fullDate}${day.isToday ? ", 오늘" : ""}${isPerfectDay(day.fullDate) ? ", 미션 모두 완료" : ""}`}
+            className={`calendar-day ${
               selectedDate === day.fullDate
-                ? "bg-green-300 text-white"
+                ? "calendar-selected"
                 : isPerfectDay(day.fullDate)
-                ? "bg-green-200 text-gray-700"
-                : "bg-gray-50 text-gray-400"
+                ? "calendar-complete"
+                : "calendar-idle"
             }`}
           >
             <div className="text-2xl font-bold mb-1">{day.num}</div>
@@ -330,10 +258,11 @@ export default function HomePage({
 
       {/* ===== 개인 미션 ===== */}
       {activeTab === "personal" && (
-        <div className="mb-20">
-          <h3 className="text-xl font-bold mb-4">
-            {isToday(selectedDate) ? "오늘의 미션" : `${formatDate()} 미션`}
-          </h3>
+        <section className="mission-section">
+          <div className="section-heading">
+            <h2>{isToday(selectedDate) ? "오늘의 미션" : `${formatDate()} 미션`}</h2>
+            <span className="count-pill" role="status">{currentMissions.filter(m => personalMissionChecked[getMissionKey(m)]).length} / {currentMissions.length} 완료</span>
+          </div>
           {currentMissions.length > 0 ? (
             currentMissions.map((missionEntry, index) => {
               const missionKey = getMissionKey(missionEntry);
@@ -341,7 +270,7 @@ export default function HomePage({
               return (
                 <div
                   key={missionKey}
-                  className={`flex items-center justify-between mb-4 p-4 rounded-3xl border transition-all ${
+                  className={`mission-row ${
                     isChecked
                       ? "bg-green-50 border-green-200"
                       : "bg-white border-gray-200"
@@ -352,9 +281,11 @@ export default function HomePage({
                       onClick={() =>
                         handlePersonalMissionCheck(missionEntry)
                       }
-                      className={`w-6 h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-all ${
+                      aria-label={`${resolveSubmissionLabel(missionEntry)} 완료`}
+                      aria-pressed={isChecked}
+                      className={`mission-check rounded-full border-2 flex items-center justify-center flex-shrink-0 ${
                         isChecked
-                          ? "bg-green-500 border-green-500"
+                          ? "bg-green-700 border-green-700"
                           : "border-gray-300 hover:border-green-400"
                       }`}
                     >
@@ -390,8 +321,9 @@ export default function HomePage({
                     </span>
                   </div>
                   <button
+                    aria-label={`${resolveSubmissionLabel(missionEntry)} 삭제`}
                     onClick={() => deleteMission(index)}
-                    className="text-red-400 hover:text-red-600 flex-shrink-0"
+                    className="icon-button mission-delete"
                   >
                     <X size={20} />
                   </button>
@@ -399,24 +331,13 @@ export default function HomePage({
               );
             })
           ) : (
-            <div className="text-center text-gray-400 py-8">
-              등록된 미션이 없습니다
-            </div>
+            <div className="empty-state"><Leaf size={28} aria-hidden="true" /><p>작은 실천부터 시작해 볼까요?</p><span>아래에서 오늘 할 미션을 골라보세요.</span></div>
           )}
 
-          <button
-            className={`flex items-center gap-2 mt-4 ${
-              selectedDate
-                ? "text-gray-600 hover:text-gray-800"
-                : "text-gray-300 cursor-not-allowed"
-            }`}
-            onClick={() => selectedDate && setShowAddMission(true)}
-            disabled={!selectedDate}
-          >
-            <Plus size={22} />
-            <span className="text-sm">오늘부터 미션시작하기!</span>
+          <button className="primary-button add-mission-button" onClick={() => selectedDate && setShowAddMission(true)} disabled={!selectedDate}>
+            <Plus size={20} aria-hidden="true" /> 미션 추가하기
           </button>
-        </div>
+        </section>
       )}
 
       {/* ===== 그룹 미션 ===== */}
@@ -426,7 +347,7 @@ export default function HomePage({
             myGroupMissions.map((mission) => (
               <div
                 key={mission.id}
-                className="bg-white rounded-3xl p-5 border border-gray-200 shadow-sm hover:shadow-md transition-shadow"
+                className="surface p-5"
               >
                 {/* 상단: 그룹명 + 체크 */}
                 <div className="flex justify-between items-start gap-3 mb-4">
@@ -459,8 +380,10 @@ export default function HomePage({
 
                   {/* 큰 노란 체크 */}
                   <button
+                    aria-label={`${mission.name} 완료`}
+                    aria-pressed={!!checkedMissions[mission.id]}
                     onClick={() => handleCheck(mission.id)}
-                    className={`w-16 h-16 border-3 rounded-full flex items-center justify-center transition-all flex-shrink-0 ${
+                    className={`w-12 h-12 border-2 rounded-full flex items-center justify-center transition-all flex-shrink-0 ${
                       checkedMissions[mission.id]
                         ? "border-yellow-400 bg-yellow-100 text-yellow-500 shadow-lg"
                         : "border-yellow-300 bg-white text-yellow-400 hover:bg-yellow-50"
@@ -515,14 +438,14 @@ export default function HomePage({
                       );
                     })}
                     {mission.participants.length === 0 && (
-                      <div className="text-xs text-gray-400">팀원이 없습니다.</div>
+                      <div className="text-xs text-gray-500">팀원이 없습니다.</div>
                     )}
                   </div>
                 </div>
               </div>
             ))
           ) : (
-            <div className="text-center text-gray-400 py-12 bg-gray-50 rounded-3xl">
+            <div className="text-center text-gray-500 py-12 bg-gray-50 rounded-3xl">
               <p>참여한 그룹 미션이 없습니다</p>
             </div>
           )}

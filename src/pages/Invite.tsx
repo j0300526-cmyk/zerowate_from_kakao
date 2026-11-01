@@ -50,9 +50,9 @@ export default function InvitePage({
   const selectedGroupName = selectedGroup ? selectedGroup.name : "선택된 그룹 없음";
 
   return (
-    <div className="bg-white px-6 py-6 rounded-3xl">
-      <div className="flex justify-between items-center mb-5">
-        <h2 className="text-2xl font-bold">팀원 초대</h2>
+    <div className="page">
+      <div className="page-header">
+        <div><p className="eyebrow">좋은 습관을 나누세요</p><h1>친구와 함께</h1><p className="page-description">초대할 그룹과 친구를 선택해 주세요.</p></div>
         {onRefreshFriends && (
           <button
             onClick={onRefreshFriends}
@@ -78,13 +78,14 @@ export default function InvitePage({
               return (
                 <button
                   key={group.id}
+                  aria-pressed={selectedGroupId === group.id}
                   onClick={() => !disabled && onSelectGroup(group.id)}
                   className={`w-full p-4 rounded-3xl border flex items-center justify-between transition ${
                     disabled
-                      ? "bg-gray-50 border-gray-200 text-gray-400 cursor-not-allowed"
+                      ? "bg-gray-50 border-gray-200 text-gray-500 cursor-not-allowed"
                       : isSelected
-                      ? "border-purple-400 bg-purple-50 text-purple-700 shadow-sm"
-                      : "border-gray-200 bg-white hover:border-purple-200"
+                      ? "border-green-600 bg-green-50 text-green-800 shadow-sm"
+                      : "border-gray-200 bg-white hover:border-green-300"
                   }`}
                   disabled={disabled}
                 >
@@ -108,23 +109,23 @@ export default function InvitePage({
         <div className="flex items-center justify-between mb-3">
           <div>
             <h3 className="text-sm font-semibold text-gray-600">초대할 친구 선택</h3>
-            <p className="text-xs text-gray-400 mt-0.5">
+            <p className="text-xs text-gray-500 mt-0.5">
               {selectedGroup
                 ? remainingSlots > 0
                   ? `잔여 슬롯 ${remainingSlots}명 (선택: ${selectedInvitees.length}명)`
                   : "이 그룹은 인원이 가득 찼어요."
                 : "초대할 그룹을 먼저 선택해주세요."}
             </p>
-            <p className="text-[11px] text-gray-400">
+            <p className="text-[11px] text-gray-500">
               랜덤으로 추천된 3명의 사용자입니다. 마음에 들지 않으면 새로고침하세요.
             </p>
           </div>
         </div>
 
         {loadingFriends ? (
-          <div className="text-center text-gray-400 py-8 text-sm">친구 목록을 불러오는 중...</div>
+          <div className="text-center text-gray-500 py-8 text-sm">친구 목록을 불러오는 중...</div>
         ) : friends.length === 0 ? (
-          <div className="text-center text-gray-400 py-8 text-sm">
+          <div className="text-center text-gray-500 py-8 text-sm">
             초대 가능한 친구가 없습니다.
           </div>
         ) : (
@@ -139,7 +140,7 @@ export default function InvitePage({
               return (
                 <div
                   key={friend.id}
-                  className="flex items-center justify-between p-4 rounded-3xl bg-gray-50 border border-gray-100"
+                  className="surface flex items-center justify-between gap-3 p-4"
                 >
                   <div className="flex items-center gap-3">
                     <div
@@ -159,7 +160,7 @@ export default function InvitePage({
                       isSelected
                         ? "bg-green-100 text-green-700 border-green-200"
                         : disabled
-                        ? "bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed"
+                        ? "bg-gray-100 text-gray-500 border-gray-200 cursor-not-allowed"
                         : "bg-white text-gray-600 border-gray-200 hover:border-green-300"
                     }`}
                   >
@@ -175,10 +176,10 @@ export default function InvitePage({
       <button
         onClick={sendInvites}
         disabled={!canInvite || sendingInvites}
-        className={`w-full py-3 rounded-3xl font-semibold transition ${
+        className={`w-full py-3 rounded-2xl font-semibold transition ${
           canInvite && !sendingInvites
-            ? "bg-purple-500 text-white hover:bg-purple-600"
-            : "bg-gray-200 text-gray-400 cursor-not-allowed"
+            ? "bg-green-700 text-white hover:bg-green-800"
+            : "bg-gray-200 text-gray-500 cursor-not-allowed"
         }`}
       >
         {sendingInvites
@@ -190,3 +191,4 @@ export default function InvitePage({
     </div>
   );
 }
+

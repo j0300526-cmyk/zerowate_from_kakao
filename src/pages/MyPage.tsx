@@ -1,8 +1,8 @@
 import React from "react";
+import Dialog from "../components/Dialog";
 import {
   ArrowLeft,
   Bell,
-  Camera,
   Check,
   Crown,
   Database,
@@ -13,7 +13,6 @@ import {
   Sprout,
   Trophy,
   User,
-  X,
 } from "lucide-react";
 
 interface Props {
@@ -21,7 +20,7 @@ interface Props {
   totalMissionsCount: number;
   currentStreak: number;
   profileColor: string;
-  onSaveProfile: (name: string, color: string, bio: string) => void;
+  onSaveProfile: (name: string, color: string, bio: string) => Promise<boolean>;
 }
 
 
@@ -40,6 +39,7 @@ export default function MyPage({
   const [profileColor, setProfileColor] = React.useState(initialColor || "bg-green-300");
   const [bio, setBio] = React.useState("친환경 실천 중!");
   const [isSaving, setIsSaving] = React.useState(false);
+  const [savedMessage, setSavedMessage] = React.useState("");
 
   const colors = [
     "bg-green-300",
@@ -116,23 +116,28 @@ export default function MyPage({
     setCurrentPage("edit");
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
+    if (isSaving || !userName.trim()) return;
     setIsSaving(true);
-    setTimeout(() => {
+    try {
+      const saved = await onSaveProfile(userName.trim(), profileColor, bio);
+      if (saved) {
+        setSavedMessage("프로필을 저장했어요.");
+        setCurrentPage("mypage");
+      }
+    } finally {
       setIsSaving(false);
-      onSaveProfile(userName, profileColor, bio);
-      alert("프로필이 저장되었습니다!");
-      setCurrentPage("mypage");
-    }, 1000);
+    }
   };
 
   // MyPage 렌더
   if (currentPage === "mypage") {
     return (
-      <div className="bg-white px-6 py-4 min-h-screen rounded-3xl">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold">마이페이지</h2>
+      <div className="page">
+        <div className="page-header">
+          <div><p className="eyebrow">차곡차곡 쌓이는 기록</p><h1>나의 발자국</h1></div>
           <button
+            aria-label="설정 열기"
             onClick={() => setShowSettings(true)}
             className="p-2 hover:bg-gray-100 rounded-full transition"
           >
@@ -140,7 +145,8 @@ export default function MyPage({
           </button>
         </div>
 
-        <div className="flex flex-col items-center mb-8">
+        {savedMessage && <p role="status" className="save-feedback">{savedMessage}</p>}
+        <div className="surface profile-card flex flex-col items-center mb-6">
           <div
             className={`w-24 h-24 ${profileColor} rounded-full mb-4 flex items-center justify-center text-white text-3xl font-bold transition-colors duration-300`}
           >
@@ -151,7 +157,7 @@ export default function MyPage({
         </div>
 
         <div className="space-y-4">
-          <div className="bg-gray-50 rounded-3xl p-4">
+          <div className="surface p-5">
             <h4 className="font-bold mb-3">내 통계</h4>
             <div className="space-y-2">
               <div className="flex justify-between">
@@ -165,7 +171,7 @@ export default function MyPage({
             </div>
           </div>
 
-          <div className="bg-gray-50 rounded-3xl p-4">
+          <div className="surface p-5">
             <div className="flex items-center justify-between mb-4">
               <div>
                 <h4 className="font-bold">내 리워드</h4>
@@ -175,7 +181,7 @@ export default function MyPage({
                 {unlockedRewardCount}/{rewards.length} 획득
               </span>
             </div>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="reward-grid">
               {rewards.map((reward) => {
                 const Icon = reward.icon;
                 return (
@@ -194,7 +200,7 @@ export default function MyPage({
                     )}
                     <div
                       className={`mb-3 flex h-11 w-11 items-center justify-center rounded-2xl ${
-                        reward.unlocked ? reward.iconClass : "bg-gray-100 text-gray-400"
+                        reward.unlocked ? reward.iconClass : "bg-gray-100 text-gray-500"
                       }`}
                     >
                       <Icon size={24} strokeWidth={2.2} />
@@ -205,7 +211,7 @@ export default function MyPage({
                     </p>
                     <span
                       className={`mt-3 inline-block text-[10px] font-bold ${
-                        reward.unlocked ? "text-green-600" : "text-gray-400"
+                        reward.unlocked ? "text-green-600" : "text-gray-500"
                       }`}
                     >
                       {reward.unlocked ? "획득 완료" : "아직 잠겨 있어요"}
@@ -214,32 +220,14 @@ export default function MyPage({
                 );
               })}
             </div>
-            <p className="text-xs text-gray-400 mt-3 text-center">
+            <p className="text-xs text-gray-500 mt-3 text-center">
               미션을 완료하고 연속 기록을 이어가 보세요
             </p>
           </div>
         </div>
 
         {/* 설정 모달 */}
-        {showSettings && (
-          <div
-            className="fixed inset-0 bg-black bg-opacity-30 flex justify-center items-end z-50 animate-in fade-in duration-300"
-            onClick={() => setShowSettings(false)}
-          >
-            <div
-              className="bg-white w-full rounded-t-3xl p-6 shadow-2xl max-w-md animate-in slide-in-from-bottom duration-300"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="flex justify-between items-center mb-6">
-                <h3 className="text-2xl font-bold">설정</h3>
-                <button
-                  onClick={() => setShowSettings(false)}
-                  className="text-gray-400 hover:text-gray-600"
-                >
-                  <X size={24} />
-                </button>
-              </div>
-
+        <Dialog open={showSettings} onClose={() => setShowSettings(false)} title="설정">
               <div className="space-y-3 mb-6">
                 <button
                   onClick={handleEditProfile}
@@ -250,21 +238,21 @@ export default function MyPage({
                   </div>
                   <div className="text-left">
                     <div className="font-bold text-gray-800">프로필 편집</div>
-                    <div className="text-xs text-gray-500">닉네임, 프로필 사진 변경</div>
+                    <div className="text-xs text-gray-500">닉네임, 소개, 프로필 색상 변경</div>
                   </div>
                 </button>
 
-                <button className="w-full flex items-center gap-4 p-4 rounded-2xl hover:bg-gray-50 transition">
+                <div className="w-full flex items-center gap-4 p-4 rounded-2xl bg-gray-50">
                   <div className="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center">
                     <Bell size={20} className="text-yellow-600" />
                   </div>
                   <div className="text-left">
                     <div className="font-bold text-gray-800">알림 설정</div>
-                    <div className="text-xs text-gray-500">미션 알림, 그룹 초대 알림</div>
+                    <div className="text-xs text-gray-500">알림 설정은 준비 중이에요</div>
                   </div>
-                </button>
+                </div>
 
-                <button className="w-full flex items-center gap-4 p-4 rounded-2xl hover:bg-gray-50 transition">
+                <div className="w-full flex items-center gap-4 p-4 rounded-2xl bg-gray-50">
                   <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
                     <Database size={20} className="text-purple-600" />
                   </div>
@@ -272,7 +260,7 @@ export default function MyPage({
                     <div className="font-bold text-gray-800">데모 데이터 안내</div>
                     <div className="text-xs text-gray-500">데모 기록은 일정 시간 후 초기화될 수 있어요</div>
                   </div>
-                </button>
+                </div>
               </div>
 
               <button
@@ -281,9 +269,7 @@ export default function MyPage({
               >
                 닫기
               </button>
-            </div>
-          </div>
-        )}
+        </Dialog>
       </div>
     );
   }
@@ -291,9 +277,10 @@ export default function MyPage({
   // ProfileEdit 렌더
   if (currentPage === "edit") {
     return (
-      <div className="bg-white min-h-screen rounded-3xl">
+      <div className="page">
         <div className="px-6 py-4 flex items-center gap-3 border-b border-gray-200">
           <button
+            aria-label="마이페이지로 돌아가기"
             onClick={() => setCurrentPage("mypage")}
             className="p-2 hover:bg-gray-100 rounded-full transition"
           >
@@ -311,22 +298,19 @@ export default function MyPage({
               >
                 {userName ? userName.charAt(0) : "?"}
               </div>
-              <button className="absolute bottom-0 right-0 w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white hover:bg-blue-600 transition shadow-lg">
-                <Camera size={20} />
-              </button>
             </div>
-            <p className="text-xs text-gray-500 text-center">
-              프로필 사진을 변경하려면 카메라 아이콘을 클릭하세요
-            </p>
+            <p className="text-xs text-gray-500 text-center">나를 표현하는 색상을 골라보세요.</p>
           </div>
 
           {/* 색상 선택 */}
           <div className="mb-8">
             <h3 className="font-bold text-gray-800 mb-3">프로필 색상 선택</h3>
             <div className="grid grid-cols-4 gap-3">
-              {colors.map((color) => (
+              {colors.map((color, index) => (
                 <button
                   key={color}
+                  aria-label={`${["초록", "파랑", "보라", "분홍", "노랑", "빨강", "남색", "하늘색"][index]} 프로필 색상`}
+                  aria-pressed={profileColor === color}
                   onClick={() => setProfileColor(color)}
                   className={`w-12 h-12 ${color} rounded-full transition-all ${
                     profileColor === color
@@ -340,8 +324,8 @@ export default function MyPage({
 
           {/* 닉네임 입력 */}
           <div className="mb-6">
-            <label className="block font-bold text-gray-800 mb-2">닉네임</label>
-            <input
+            <label htmlFor="profile-name" className="block font-bold text-gray-800 mb-2">닉네임</label>
+            <input id="profile-name"
               type="text"
               value={userName}
               onChange={(e) => setUserName(e.target.value.slice(0, 15))}
@@ -354,8 +338,8 @@ export default function MyPage({
 
           {/* 소개 입력 */}
           <div className="mb-8">
-            <label className="block font-bold text-gray-800 mb-2">소개</label>
-            <textarea
+            <label htmlFor="profile-bio" className="block font-bold text-gray-800 mb-2">소개</label>
+            <textarea id="profile-bio"
               value={bio}
               onChange={(e) => setBio(e.target.value.slice(0, 50))}
               maxLength={50}
@@ -376,11 +360,11 @@ export default function MyPage({
             </button>
             <button
               onClick={handleSave}
-              disabled={isSaving}
+              disabled={isSaving || !userName.trim()}
               className={`flex-1 py-3 rounded-3xl font-medium text-white transition ${
                 isSaving
                   ? "bg-green-400 cursor-not-allowed"
-                  : "bg-green-500 hover:bg-green-600"
+                  : "bg-green-700 hover:bg-green-800"
               }`}
             >
               {isSaving ? "저장 중..." : "저장하기"}
@@ -391,3 +375,4 @@ export default function MyPage({
     );
   }
 }
+

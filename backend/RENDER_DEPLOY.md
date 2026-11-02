@@ -1,12 +1,14 @@
 # Render 배포 가이드
 
+> 현재 운영 사이트는 [https://zero-waste-routine.vercel.app/](https://zero-waste-routine.vercel.app/)이며 프런트엔드와 백엔드를 Vercel에서 함께 제공합니다. 이 문서는 Render를 별도 백엔드로 사용할 때만 참고하세요.
+
 ## 1. Render 계정 생성 및 프로젝트 연결
 
 1. [Render 홈페이지](https://render.com) 접속
 2. GitHub 계정으로 회원가입/로그인
 3. Dashboard에서 **New +** 버튼 클릭
 4. **Blueprint** 선택 (render.yaml 사용)
-5. GitHub 저장소 연결 (j0300526-cmyk/pr)
+5. GitHub 저장소 연결 (`j0300526-cmyk/zerowate_from_kakao`)
 6. 저장소 선택 후 **Connect** 클릭
 
 ## 2. 서비스가 자동 생성됨
@@ -21,9 +23,9 @@
 Render Dashboard에서 `zero-waste-api` 서비스 선택 후 **Environment** 탭에서 추가:
 
 ```
-CORS_ORIGINS=https://your-vercel-app.vercel.app,http://localhost:5173
+CORS_ORIGINS=https://zero-waste-routine.vercel.app,http://localhost:5173
 KAKAO_CLIENT_ID=(카카오 REST API 키)
-KAKAO_REDIRECT_URI=https://your-vercel-app.vercel.app/auth/kakao/callback
+KAKAO_REDIRECT_URI=https://zero-waste-routine.vercel.app/auth/kakao/callback
 ```
 
 ## 4. 배포 URL 확인

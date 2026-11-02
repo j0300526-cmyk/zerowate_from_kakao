@@ -9,7 +9,7 @@
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
 [![Vercel](https://img.shields.io/badge/Vercel-Deployed-000000?logo=vercel&logoColor=white)](https://zero-waste-routine.vercel.app/)
 
-### [🚀 Live Demo](https://zero-waste-routine.vercel.app/)
+### [🚀 Production Site](https://zero-waste-routine.vercel.app/)
 
 </div>
 
@@ -35,6 +35,9 @@
 환경을 위한 행동은 거창한 목표보다 작은 실천을 꾸준히 이어가는 것이 중요합니다. Zero Waste Routine은 일별 미션과 주간 루틴을 기록하고, 그룹 챌린지와 랭킹을 통해 친환경 행동을 자연스럽게 지속할 수 있도록 만든 서비스입니다.
 
 포트폴리오 데모는 로그인 없이 바로 체험할 수 있는 공용 게스트 모드로 동작합니다.
+
+- **운영 사이트:** [https://zero-waste-routine.vercel.app/](https://zero-waste-routine.vercel.app/)
+- **운영 브랜치:** `main`
 
 ## 주요 기능
 
@@ -65,6 +68,7 @@ Browser
 ```
 
 프런트엔드와 백엔드를 하나의 Vercel 프로젝트로 배포하며, `/api/*` 요청만 FastAPI 서비스로 전달합니다.
+운영 주소는 `https://zero-waste-routine.vercel.app/`입니다.
 
 ## 로컬 실행
 

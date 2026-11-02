@@ -1,5 +1,7 @@
 # NCP 배포 가이드
 
+> 현재 운영 사이트는 [https://zero-waste-routine.vercel.app/](https://zero-waste-routine.vercel.app/)입니다. 아래 내용은 NCP 서버에 별도 배포할 때 사용하는 대체 절차입니다.
+
 ## 서버 정보
 - **공인 IP**: 49.50.136.124
 - **서버 이름**: zero-waste-api
@@ -145,8 +147,9 @@ sudo systemctl reload nginx
 
 ## 확인 사항
 
-1. 프론트엔드가 `http://49.50.136.124/`에서 접속 가능한지 확인
-2. 백엔드 API가 정상 작동하는지 확인
-3. CORS 설정이 올바른지 확인
-4. 환경 변수 `VITE_API_BASE_URL`이 올바르게 설정되었는지 확인
+1. 현재 운영 사이트가 `https://zero-waste-routine.vercel.app/`에서 접속 가능한지 확인
+2. NCP 대체 배포를 사용하는 경우 프론트엔드가 `http://49.50.136.124/`에서 접속 가능한지 확인
+3. 백엔드 API가 정상 작동하는지 확인
+4. CORS 설정이 올바른지 확인
+5. 환경 변수 `VITE_API_BASE_URL`이 올바르게 설정되었는지 확인
 

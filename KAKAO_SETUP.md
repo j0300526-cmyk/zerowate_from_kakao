@@ -14,7 +14,7 @@
 3. **Redirect URI** 등록:
    - `http://localhost:5173/auth/kakao/callback` (개발용)
    - `http://127.0.0.1:5173/auth/kakao/callback` (개발용 대체)
-   - 배포 시: `https://your-domain.com/auth/kakao/callback` 추가
+   - 운영: `https://zero-waste-routine.vercel.app/auth/kakao/callback`
 
 ### 동의 항목 설정
 1. **카카오 로그인** > **동의 항목** 메뉴 선택
@@ -34,6 +34,12 @@
 # 카카오 소셜 로그인 설정
 KAKAO_CLIENT_ID=your-kakao-rest-api-key-here
 KAKAO_REDIRECT_URI=http://localhost:5173/auth/kakao/callback
+```
+
+Vercel 운영 환경에서는 다음 값을 사용합니다.
+
+```env
+KAKAO_REDIRECT_URI=https://zero-waste-routine.vercel.app/auth/kakao/callback
 ```
 
 **`KAKAO_CLIENT_ID`**: 카카오 개발자 콘솔에서 복사한 **REST API 키** 붙여넣기
@@ -71,6 +77,12 @@ VITE_KAKAO_CLIENT_ID=your-kakao-rest-api-key-here
 VITE_KAKAO_REDIRECT_URI=http://localhost:5173/auth/kakao/callback
 ```
 
+Vercel 운영 환경에서는 다음 값을 사용합니다.
+
+```env
+VITE_KAKAO_REDIRECT_URI=https://zero-waste-routine.vercel.app/auth/kakao/callback
+```
+
 **주의**: Vite 환경 변수는 반드시 `VITE_` 접두사로 시작해야 합니다.
 
 ### 프론트엔드 서버 재시작
@@ -82,7 +94,7 @@ npm run dev
 
 ## 4️⃣ 테스트
 
-1. **로그인 페이지 접속**: http://localhost:5173
+1. **로그인 페이지 접속**: 개발 환경은 http://localhost:5173, 운영 환경은 https://zero-waste-routine.vercel.app/
 2. **카카오 로그인 버튼** 클릭
 3. 카카오 로그인 페이지로 리다이렉트 확인
 4. 카카오 계정으로 로그인
@@ -97,7 +109,7 @@ npm run dev
 - Vite 서버를 재시작했는지 확인 (환경 변수 변경 시 재시작 필수)
 
 ### 2. "Redirect URI mismatch" 에러
-- 카카오 개발자 콘솔의 **Redirect URI**가 정확히 `http://localhost:5173/auth/kakao/callback`인지 확인
+- 카카오 개발자 콘솔의 **Redirect URI**가 개발 환경에서는 `http://localhost:5173/auth/kakao/callback`, 운영 환경에서는 `https://zero-waste-routine.vercel.app/auth/kakao/callback`인지 확인
 - 프로토콜(http/https), 포트 번호까지 정확히 일치해야 함
 
 ### 3. 백엔드 500 에러
@@ -106,7 +118,7 @@ npm run dev
 - `httpx` 패키지가 설치되었는지 확인: `pip list | grep httpx`
 
 ### 4. CORS 에러
-- `backend/main.py`의 `CORS_ORIGINS`에 `http://localhost:5173`이 포함되어 있는지 확인
+- `backend/main.py`의 `CORS_ORIGINS`에 개발 주소와 `https://zero-waste-routine.vercel.app`이 포함되어 있는지 확인
 - 백엔드 서버가 실행 중인지 확인
 
 ---

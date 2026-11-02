@@ -2,6 +2,9 @@
 
 FastAPI 기반 백엔드 서버
 
+- **운영 사이트:** [https://zero-waste-routine.vercel.app/](https://zero-waste-routine.vercel.app/)
+- 운영 환경에서는 같은 Vercel 프로젝트의 `/api/*` 경로로 이 서버에 접근합니다.
+
 ## 가상환경 위치
 
 백엔드 코드는 저장소의 `backend/` 디렉터리에 있습니다. 전체 설치·프런트엔드 실행·배포 안내는 [프로젝트 README](../README.md)를 참고하세요.
@@ -92,6 +95,8 @@ uvicorn main:app --reload --host 0.0.0.0 --port 8000
 - API: http://localhost:8000/api
 - API 문서: http://localhost:8000/docs
 - 대체 문서: http://localhost:8000/redoc
+
+운영 프런트엔드는 [https://zero-waste-routine.vercel.app/](https://zero-waste-routine.vercel.app/)에서 제공됩니다.
 
 ## 프로젝트 구조
 

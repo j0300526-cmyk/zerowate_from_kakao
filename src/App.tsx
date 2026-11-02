@@ -1,5 +1,6 @@
 // 앱 전역 상태와 페이지 전환을 관리하는 루트 컴포넌트
 import React, { useEffect, useState, useRef, useCallback, useMemo } from "react";
+import { Leaf } from "lucide-react";
 import HomePage from "./pages/Home";
 import GroupManagePage from "./pages/GroupManage";
 import InvitePage from "./pages/Invite";
@@ -559,8 +560,10 @@ function App() {
       await safeStorage.set(STORAGE_KEYS.userName, name);
       await safeStorage.set(STORAGE_KEYS.profileColor, color);
       await safeStorage.set(STORAGE_KEYS.userBio, bio);
+      return true;
     } catch {
       showError("프로필 저장에 실패했어요");
+      return false;
     }
   };
 
@@ -1134,14 +1137,18 @@ function App() {
   const currentStreak = calculateStreak(missions);
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
+    <div className="app-shell">
+      <a href="#main-content" className="skip-link">본문으로 이동</a>
+      <header className="app-header">
+        <div className="brand"><Leaf size={23} aria-hidden="true" /><span>Zero Waste<span className="brand-detail">Routine</span></span></div>
+        <span className="brand-note">작은 실천, 더 나은 내일</span>
+      </header>
       <ErrorToast message={errorMessage} />
 
       <div
-        className="w-full max-w-sm bg-white rounded-3xl shadow-xl flex flex-col"
-        style={{ aspectRatio: "9/16", maxHeight: "90vh" }}
+        className="app-content"
       >
-        <div className="flex-1 overflow-y-auto">
+        <main id="main-content" tabIndex={-1} key={currentPage}>
           {currentPage === "home" && (
             <HomePage
               userName={userName}
@@ -1215,9 +1222,12 @@ function App() {
               onSaveProfile={saveUserProfile}
             />
           )}
-        </div>
+        </main>
 
-        <BottomTab currentPage={currentPage} setCurrentPage={setCurrentPage} />
+        <BottomTab currentPage={currentPage} setCurrentPage={(page) => {
+          setCurrentPage(page);
+          window.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
+        }} />
       </div>
 
       <AddMissionModal
@@ -1251,3 +1261,4 @@ function App() {
 }
 
 export default App;
+

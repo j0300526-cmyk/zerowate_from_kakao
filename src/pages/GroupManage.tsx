@@ -59,7 +59,7 @@ export default function GroupManagePage({
   return (
     <div className="page">
       <div className="page-header group-page-header">
-        <div><p className="eyebrow">함께하면 더 오래</p><h1>우리의 초록 습관</h1><p className="page-description">서로의 실천을 응원하는 작은 모임.</p></div>
+        <div><p className="eyebrow">함께하면 더 오래</p><h1>그룹 미션</h1><p className="page-description">서로의 실천을 응원하는 작은 모임.</p></div>
         {onCreateGroup && (
           <button
             onClick={() => setShowCreateModal(true)}

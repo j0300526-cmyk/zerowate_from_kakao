@@ -90,7 +90,7 @@
   .sheet { --sheet-progress: 0; position: fixed; inset: 0; width: 100%; height: 100%; max-width: none; max-height: none; margin: 0; padding: 1.25rem; background: transparent; border: 0; color: #1e3028; overflow: hidden; }
   .sheet[open] { display: flex; align-items: center; justify-content: center; }
   .sheet::backdrop { background: rgba(16,29,22,.35); backdrop-filter: blur(4px); }
-  .sheet-surface { width: min(100%, 30rem); max-height: 90dvh; overflow-y: auto; overscroll-behavior: contain; background: #fbfdfb; border-radius: 1.75rem; border: 1px solid #fff; box-shadow: 0 24px 80px #10241b40; opacity: var(--sheet-progress); transform: translateY(calc((1 - var(--sheet-progress)) * 2.5rem)) scale(calc(.98 + var(--sheet-progress) * .02)); }
+  .sheet-surface { width: min(100%, 30rem); max-height: 90dvh; overflow-y: auto; overscroll-behavior: contain; background: rgba(251,253,251,.96); backdrop-filter: blur(28px) saturate(140%); border-radius: 1.75rem; border: 1px solid #fff; box-shadow: 0 24px 80px #10241b40; opacity: var(--sheet-progress); transform: translateY(calc((1 - var(--sheet-progress)) * 2.5rem)) scale(calc(.98 + var(--sheet-progress) * .02)); }
   .sheet-heading { display: flex; justify-content: space-between; align-items: flex-start; gap: .75rem; padding: 1.5rem 1.5rem 1.25rem; }
   .sheet-heading h2 { font-size: 1.4rem; font-weight: 700; line-height: 1.35; outline: none; }
   .sheet-heading p { color: var(--muted); font-size: .85rem; margin-top: .5rem; }

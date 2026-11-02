@@ -135,7 +135,7 @@ export default function MyPage({
     return (
       <div className="page">
         <div className="page-header">
-          <div><p className="eyebrow">차곡차곡 쌓이는 기록</p><h1>나의 발자국</h1></div>
+          <div><p className="eyebrow">차곡차곡 쌓이는 기록</p><h1>마이페이지</h1></div>
           <button
             aria-label="설정 열기"
             onClick={() => setShowSettings(true)}

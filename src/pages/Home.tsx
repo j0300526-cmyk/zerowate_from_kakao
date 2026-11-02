@@ -1,8 +1,6 @@
 import React from "react";
 import { Plus, X, Leaf } from "lucide-react";
-import Confetti from "react-confetti";
 import SegmentedControl from "../components/SegmentedControl";
-import { useReducedMotion } from "../hooks/useReducedMotion";
 import { CatalogMission, Mission, PersonalMissionEntry, WeekDay } from "../types";
 import { groupMissionApi } from "../api/groupMission";
 import { saveDayMissions, loadDayMissions, saveWeeklyRoutineCompletion } from "../utils/personalMissionsStorage";
@@ -49,22 +47,8 @@ export default function HomePage({
   onProfileClick,
   loadDay,
 }: Props) {
-  const reducedMotion = useReducedMotion();
   const [checkedMissions, setCheckedMissions] = React.useState<Record<number, boolean>>({});
   const [personalMissionChecked, setPersonalMissionChecked] = React.useState<Record<string, boolean>>({});
-  const [showConfetti, setShowConfetti] = React.useState(false);
-  const [windowSize, setWindowSize] = React.useState({ width: 0, height: 0 });
-
-  // 윈도우 크기 설정
-  React.useEffect(() => {
-    const updateSize = () => {
-      setWindowSize({ width: window.innerWidth, height: window.innerHeight });
-    };
-    updateSize();
-    window.addEventListener("resize", updateSize);
-    return () => window.removeEventListener("resize", updateSize);
-  }, []);
-
   const getMissionKey = (missionEntry: PersonalMissionEntry) =>
     `${missionEntry.missionId}::${missionEntry.submission}`;
 
@@ -99,12 +83,6 @@ export default function HomePage({
     const currentChecked = !!checkedMissions[id];
     const newChecked = !currentChecked;
 
-    // 미션 성공 시 폭죽 효과
-    if (newChecked && !currentChecked) {
-      setShowConfetti(true);
-      setTimeout(() => setShowConfetti(false), 3000);
-    }
-
     // 로컬 상태 먼저 업데이트 (낙관적 업데이트)
     setCheckedMissions((prev) => ({ ...prev, [id]: newChecked }));
 
@@ -123,12 +101,6 @@ export default function HomePage({
     const key = getMissionKey(missionEntry);
     const currentChecked = !!personalMissionChecked[key];
     const newChecked = !currentChecked;
-
-    // 미션 성공 시 폭죽 효과
-    if (newChecked && !currentChecked) {
-      setShowConfetti(true);
-      setTimeout(() => setShowConfetti(false), 3000);
-    }
 
     // 로컬 상태 먼저 업데이트 (낙관적 업데이트)
     setPersonalMissionChecked((prev) => ({ ...prev, [key]: newChecked }));
@@ -196,22 +168,11 @@ export default function HomePage({
 
   return (
     <div className="page home-page">
-      {/* 폭죽 효과 */}
-      {showConfetti && !reducedMotion && (
-        <Confetti
-          width={windowSize.width}
-          height={windowSize.height}
-          recycle={false}
-          numberOfPieces={48}
-          gravity={0.3}
-        />
-      )}
-      
       <header className="page-header">
         <div>
           <p className="eyebrow">나의 작은 실천</p>
-          <h1>오늘도, 가볍게 초록.</h1>
-          <p className="page-description">{userName || "사용자"}님, 나만의 속도로 이어가요.</p>
+          <h1>오늘의 루틴</h1>
+          <p className="page-description">{userName || "사용자"}님, 오늘 실천할 미션을 확인해 보세요.</p>
         </div>
         <button onClick={onProfileClick} aria-label="내 프로필 보기" className={`profile-avatar ${profileColor}`}>
           {userName ? userName.charAt(0) : "?"}

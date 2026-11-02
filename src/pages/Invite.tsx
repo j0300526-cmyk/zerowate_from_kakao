@@ -52,7 +52,7 @@ export default function InvitePage({
   return (
     <div className="page">
       <div className="page-header">
-        <div><p className="eyebrow">좋은 습관을 나누세요</p><h1>친구와 함께</h1><p className="page-description">초대할 그룹과 친구를 선택해 주세요.</p></div>
+        <div><p className="eyebrow">좋은 습관을 나누세요</p><h1>친구 초대</h1><p className="page-description">초대할 그룹과 친구를 선택해 주세요.</p></div>
         {onRefreshFriends && (
           <button
             onClick={onRefreshFriends}

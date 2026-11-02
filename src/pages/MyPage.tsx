@@ -1,5 +1,6 @@
 import React from "react";
 import Dialog from "../components/Dialog";
+import ProfileAvatar, { AVATAR_OPTIONS, isAvatarId } from "../components/ProfileAvatar";
 import {
   ArrowLeft,
   Bell,
@@ -20,7 +21,9 @@ interface Props {
   totalMissionsCount: number;
   currentStreak: number;
   profileColor: string;
-  onSaveProfile: (name: string, color: string, bio: string) => Promise<boolean>;
+  profileAvatar: string;
+  userBio: string;
+  onSaveProfile: (name: string, color: string, bio: string, avatar: string) => Promise<boolean>;
 }
 
 
@@ -29,6 +32,8 @@ export default function MyPage({
   totalMissionsCount,
   currentStreak,
   profileColor: initialColor,
+  profileAvatar: initialAvatar,
+  userBio: initialBio,
   onSaveProfile,
 }: Props) {
   const [currentPage, setCurrentPage] = React.useState("mypage");
@@ -37,7 +42,10 @@ export default function MyPage({
   // ProfileEdit 상태
   const [userName, setUserName] = React.useState(initialUserName || "사용자");
   const [profileColor, setProfileColor] = React.useState(initialColor || "bg-green-300");
-  const [bio, setBio] = React.useState("친환경 실천 중!");
+  const [profileAvatar, setProfileAvatar] = React.useState(
+    isAvatarId(initialAvatar) ? initialAvatar : "sprout"
+  );
+  const [bio, setBio] = React.useState(initialBio || "친환경 실천 중!");
   const [isSaving, setIsSaving] = React.useState(false);
   const [savedMessage, setSavedMessage] = React.useState("");
 
@@ -120,7 +128,7 @@ export default function MyPage({
     if (isSaving || !userName.trim()) return;
     setIsSaving(true);
     try {
-      const saved = await onSaveProfile(userName.trim(), profileColor, bio);
+      const saved = await onSaveProfile(userName.trim(), profileColor, bio, profileAvatar);
       if (saved) {
         setSavedMessage("프로필을 저장했어요.");
         setCurrentPage("mypage");
@@ -147,11 +155,13 @@ export default function MyPage({
 
         {savedMessage && <p role="status" className="save-feedback">{savedMessage}</p>}
         <div className="surface profile-card flex flex-col items-center mb-6">
-          <div
-            className={`w-24 h-24 ${profileColor} rounded-full mb-4 flex items-center justify-center text-white text-3xl font-bold transition-colors duration-300`}
-          >
-            {userName ? userName.charAt(0) : "?"}
-          </div>
+          <ProfileAvatar
+            avatar={profileAvatar}
+            color={profileColor}
+            size="lg"
+            className="mb-4"
+            label={`${userName || "사용자"}님의 ${AVATAR_OPTIONS.find((option) => option.id === profileAvatar)?.label} 프로필`}
+          />
           <h3 className="text-xl font-bold mb-2">{userName || "사용자"}</h3>
           <p className="text-gray-500 text-sm">{bio}</p>
         </div>
@@ -238,7 +248,7 @@ export default function MyPage({
                   </div>
                   <div className="text-left">
                     <div className="font-bold text-gray-800">프로필 편집</div>
-                    <div className="text-xs text-gray-500">닉네임, 소개, 프로필 색상 변경</div>
+                    <div className="text-xs text-gray-500">닉네임, 소개, 프로필 캐릭터 변경</div>
                   </div>
                 </button>
 
@@ -290,21 +300,43 @@ export default function MyPage({
         </div>
 
         <div className="px-6 py-6">
-          {/* 프로필 사진 섹션 */}
-          <div className="flex flex-col items-center mb-8">
-            <div className="relative mb-4">
-              <div
-                className={`w-32 h-32 ${profileColor} rounded-full flex items-center justify-center text-white text-5xl font-bold transition-colors duration-300`}
-              >
-                {userName ? userName.charAt(0) : "?"}
-              </div>
+          <div className="profile-preview">
+            <ProfileAvatar
+              avatar={profileAvatar}
+              color={profileColor}
+              size="xl"
+              label={`선택한 ${AVATAR_OPTIONS.find((option) => option.id === profileAvatar)?.label} 프로필 미리보기`}
+            />
+            <div>
+              <p className="font-bold text-gray-800">내 프로필 미리보기</p>
+              <p className="text-sm text-gray-500 mt-1">캐릭터와 배경색을 골라보세요.</p>
             </div>
-            <p className="text-xs text-gray-500 text-center">나를 표현하는 색상을 골라보세요.</p>
           </div>
 
-          {/* 색상 선택 */}
+          <fieldset className="mb-8">
+            <legend className="font-bold text-gray-800 mb-3">프로필 캐릭터</legend>
+            <div className="avatar-picker">
+              {AVATAR_OPTIONS.map((option) => (
+                <button
+                  key={option.id}
+                  type="button"
+                  aria-label={`${option.label} 캐릭터 선택`}
+                  aria-pressed={profileAvatar === option.id}
+                  onClick={() => setProfileAvatar(option.id)}
+                  className="avatar-option"
+                >
+                  <ProfileAvatar avatar={option.id} color={profileColor} size="sm" />
+                  <span>{option.label}</span>
+                  {profileAvatar === option.id && (
+                    <span className="avatar-option-check" aria-hidden="true"><Check size={13} strokeWidth={3} /></span>
+                  )}
+                </button>
+              ))}
+            </div>
+          </fieldset>
+
           <div className="mb-8">
-            <h3 className="font-bold text-gray-800 mb-3">프로필 색상 선택</h3>
+            <h3 className="font-bold text-gray-800 mb-3">배경색</h3>
             <div className="grid grid-cols-4 gap-3">
               {colors.map((color, index) => (
                 <button

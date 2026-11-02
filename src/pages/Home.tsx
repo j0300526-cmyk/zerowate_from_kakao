@@ -1,4 +1,5 @@
 import React from "react";
+import ProfileAvatar from "../components/ProfileAvatar";
 import { Plus, X, Leaf } from "lucide-react";
 import SegmentedControl from "../components/SegmentedControl";
 import { CatalogMission, Mission, PersonalMissionEntry, WeekDay } from "../types";
@@ -8,6 +9,7 @@ import { saveDayMissions, loadDayMissions, saveWeeklyRoutineCompletion } from ".
 interface Props {
   userName: string;
   profileColor: string;
+  profileAvatar: string;
   weekDays: WeekDay[];
   selectedDate: string | null;
   setSelectedDate: (d: string) => void;
@@ -30,6 +32,7 @@ interface Props {
 export default function HomePage({
   userName,
   profileColor,
+  profileAvatar,
   weekDays,
   selectedDate,
   setSelectedDate,
@@ -174,8 +177,8 @@ export default function HomePage({
           <h1>오늘의 루틴</h1>
           <p className="page-description">{userName || "사용자"}님, 오늘 실천할 미션을 확인해 보세요.</p>
         </div>
-        <button onClick={onProfileClick} aria-label="내 프로필 보기" className={`profile-avatar ${profileColor}`}>
-          {userName ? userName.charAt(0) : "?"}
+        <button onClick={onProfileClick} aria-label="내 프로필 보기" className="profile-avatar">
+          <ProfileAvatar avatar={profileAvatar} color={profileColor} size="sm" />
         </button>
       </header>
 

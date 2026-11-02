@@ -64,6 +64,8 @@ function App() {
   // ===== State =====
   const [userName, setUserName] = useState("");
   const [profileColor, setProfileColor] = useState("bg-green-300");
+  const [profileAvatar, setProfileAvatar] = useState("sprout");
+  const [userBio, setUserBio] = useState("친환경 실천 중!");
   const [userId, setUserId] = useState<number | undefined>(undefined);
   const [missions, setMissions] = useState<MissionsRecord>({});
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
@@ -448,6 +450,14 @@ function App() {
       const color = getVal(colorResult);
       if (color !== null) setProfileColor(color);
 
+      const avatarResult = await safeStorage.get(STORAGE_KEYS.profileAvatar);
+      const avatar = getVal(avatarResult);
+      if (avatar !== null) setProfileAvatar(avatar);
+
+      const bioResult = await safeStorage.get(STORAGE_KEYS.userBio);
+      const storedBio = getVal(bioResult);
+      if (storedBio !== null) setUserBio(storedBio);
+
       const missionsResult = await safeStorage.get(STORAGE_KEYS.missions);
       const missionsRaw = getVal(missionsResult);
       if (missionsRaw !== null) {
@@ -548,7 +558,8 @@ function App() {
   const saveUserProfile = async (
     name: string,
     color: string,
-    bio: string
+    bio: string,
+    avatar: string
   ) => {
     try {
       await api("/users/me", {
@@ -557,8 +568,11 @@ function App() {
       });
       setUserName(name);
       setProfileColor(color);
+      setProfileAvatar(avatar);
+      setUserBio(bio);
       await safeStorage.set(STORAGE_KEYS.userName, name);
       await safeStorage.set(STORAGE_KEYS.profileColor, color);
+      await safeStorage.set(STORAGE_KEYS.profileAvatar, avatar);
       await safeStorage.set(STORAGE_KEYS.userBio, bio);
       return true;
     } catch {
@@ -1153,6 +1167,7 @@ function App() {
             <HomePage
               userName={userName}
               profileColor={profileColor}
+              profileAvatar={profileAvatar}
               weekDays={weekDays}
               selectedDate={selectedDate}
               setSelectedDate={handleSelectDate}
@@ -1219,6 +1234,8 @@ function App() {
               totalMissionsCount={totalMissionsCount}
               currentStreak={currentStreak}
               profileColor={profileColor}
+              profileAvatar={profileAvatar}
+              userBio={userBio}
               onSaveProfile={saveUserProfile}
             />
           )}

@@ -1,6 +1,7 @@
 # FastAPI 메인 애플리케이션
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from sqlalchemy import text
 from database import engine, Base, SessionLocal, ensure_day_mission_schema, ensure_user_profile_schema
 from models import CatalogMission, GroupMember, GroupMission, User
 from routers import auth, users, missions, day_missions, group_missions, friends, ranking, utils, personal_routine
@@ -35,6 +36,14 @@ def ensure_demo_data():
     """Create the shared guest account and starter content for fresh instances."""
     db = SessionLocal()
     try:
+        # Vercel can cold-start more than one function process at once. Serialize
+        # the check-and-create block so two processes cannot insert the same
+        # guest account (or starter group) simultaneously.
+        if engine.dialect.name == "sqlite":
+            db.execute(text("BEGIN IMMEDIATE"))
+        elif engine.dialect.name == "postgresql":
+            db.execute(text("SELECT pg_advisory_xact_lock(2097564868)"))
+
         guest = db.query(User).filter(User.email == "guest@zero-waste.local").first()
         if guest is None:
             guest = User(

@@ -72,11 +72,11 @@ export default function GroupDetailModal({
           })}
         </div>
         <div className="flex gap-3">
-          <button onClick={onClose} className="flex-1 py-3 bg-gray-200 rounded-3xl font-medium text-gray-700">닫기</button>
+          <button onClick={onClose} className="dialog-action dialog-action-secondary">닫기</button>
           {isInMyGroups(displayed.id) ? (
             <button
               onClick={() => { onLeave(displayed.id); onClose(); }}
-              className="flex-1 py-3 bg-red-50 rounded-3xl font-medium text-red-500 border border-red-200"
+              className="dialog-action dialog-action-danger-soft"
             >
               나가기
             </button>
@@ -84,11 +84,7 @@ export default function GroupDetailModal({
             <button
               onClick={() => { onJoin(displayed); onClose(); }}
               disabled={displayed.participants.length >= 3}
-              className={`flex-1 py-3 rounded-3xl font-medium ${
-                displayed.participants.length >= 3
-                  ? "bg-gray-100 text-gray-500 cursor-not-allowed"
-                  : "bg-green-700 text-white"
-              }`}
+              className="dialog-action dialog-action-primary"
             >
               {displayed.participants.length >= 3 ? "인원 마감" : "참여하기"}
             </button>

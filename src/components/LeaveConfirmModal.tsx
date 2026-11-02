@@ -18,8 +18,8 @@ export default function LeaveConfirmModal({ mission, onCancel, onConfirm }: Prop
     <Dialog open={!!mission} onClose={onCancel} title="그룹 나가기">
         <p className="text-sm text-gray-600 mb-6">"{displayed.name}" 그룹에서 나가시겠어요?</p>
         <div className="flex gap-3">
-          <button onClick={onCancel} className="flex-1 py-3 bg-gray-200 rounded-2xl font-medium text-gray-700">취소</button>
-          <button onClick={() => onConfirm(displayed.id)} className="flex-1 py-3 bg-red-500 rounded-2xl font-medium text-white">
+          <button onClick={onCancel} className="dialog-action dialog-action-secondary">취소</button>
+          <button onClick={() => onConfirm(displayed.id)} className="dialog-action dialog-action-danger">
             나가기
           </button>
         </div>

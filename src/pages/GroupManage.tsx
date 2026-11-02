@@ -181,11 +181,7 @@ export default function GroupManagePage({
                     aria-label={`${["파랑", "초록", "보라", "분홍", "노랑", "주황"][index]} 그룹 색상`}
                     aria-pressed={selectedColor === color}
                     onClick={() => setSelectedColor(color)}
-                    className={`w-12 h-12 ${color} rounded-full border-4 transition-all ${
-                      selectedColor === color
-                        ? "border-gray-800 scale-110"
-                        : "border-transparent hover:border-gray-300"
-                    }`}
+                    className={`group-color-option ${color}`}
                   />
                 ))}
               </div>
@@ -194,7 +190,7 @@ export default function GroupManagePage({
             <div className="flex gap-3">
               <button
                 onClick={() => setShowCreateModal(false)}
-                className="flex-1 py-3 bg-gray-200 rounded-2xl font-medium text-gray-700"
+                className="dialog-action dialog-action-secondary"
                 disabled={isCreating}
               >
                 취소
@@ -202,11 +198,7 @@ export default function GroupManagePage({
               <button
                 onClick={handleCreateGroup}
                 disabled={!groupName.trim() || isCreating}
-                className={`flex-1 py-3 rounded-2xl font-medium text-white ${
-                  !groupName.trim() || isCreating
-                    ? "bg-gray-300 cursor-not-allowed"
-                    : "bg-green-700 hover:bg-green-800"
-                }`}
+                className="dialog-action dialog-action-primary"
               >
                 {isCreating ? "생성 중..." : "만들기"}
               </button>

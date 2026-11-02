@@ -344,11 +344,7 @@ export default function MyPage({
                   aria-label={`${["초록", "파랑", "보라", "분홍", "노랑", "빨강", "남색", "하늘색"][index]} 프로필 색상`}
                   aria-pressed={profileColor === color}
                   onClick={() => setProfileColor(color)}
-                  className={`w-12 h-12 ${color} rounded-full transition-all ${
-                    profileColor === color
-                      ? "ring-2 ring-offset-2 ring-gray-400 scale-110"
-                      : "hover:scale-105"
-                  }`}
+                  className={`profile-color-option ${color}`}
                 />
               ))}
             </div>

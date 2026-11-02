@@ -363,10 +363,10 @@ export default function HomePage({
                     aria-label={`${mission.name} 완료`}
                     aria-pressed={!!checkedMissions[mission.id]}
                     onClick={() => handleCheck(mission.id)}
-                    className={`w-12 h-12 border-2 rounded-full flex items-center justify-center transition-all flex-shrink-0 ${
+                    className={`mission-complete-toggle w-12 h-12 border-2 rounded-full flex items-center justify-center flex-shrink-0 ${
                       checkedMissions[mission.id]
                         ? "border-yellow-400 bg-yellow-100 text-yellow-500 shadow-lg"
-                        : "border-yellow-300 bg-white text-yellow-400 hover:bg-yellow-50"
+                        : "border-yellow-300 bg-white text-yellow-400"
                     }`}
                   >
                     {checkedMissions[mission.id] ? (

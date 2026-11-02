@@ -124,7 +124,7 @@ export default function AddMissionModal({
         <div className="flex gap-3">
           <button
             onClick={onClose}
-            className="flex-1 py-3 bg-gray-200 rounded-2xl font-medium text-gray-700"
+            className="dialog-action dialog-action-secondary"
           >
             취소
           </button>
@@ -139,13 +139,7 @@ export default function AddMissionModal({
             disabled={
               !selection.categoryId || selection.selectedSubMissions.length === 0 || loading
             }
-            className={`flex-1 py-3 rounded-2xl font-medium text-white ${
-              selection.categoryId &&
-              selection.selectedSubMissions.length > 0 &&
-              !loading
-                ? "bg-green-700 hover:bg-green-800"
-                : "bg-gray-300 cursor-not-allowed"
-            }`}
+            className="dialog-action dialog-action-primary"
           >
             {loading ? "불러오는 중…" : selection.selectedSubMissions.length ? `${selection.selectedSubMissions.length}개 추가하기` : "미션 추가하기"}
           </button>

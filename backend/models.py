@@ -12,6 +12,7 @@ class User(Base):
     password_hash = Column(String, nullable=True)  # 소셜 로그인 사용자는 null
     name = Column(String, nullable=False)
     profile_color = Column(String, default="bg-green-300")
+    profile_avatar = Column(String, default="sprout")
     bio = Column(Text, default="친환경 실천 중!")
     kakao_id = Column(String, unique=True, nullable=True, index=True)  # 카카오 소셜 로그인 ID
     created_at = Column(DateTime(timezone=True), server_default=func.now())
@@ -165,4 +166,5 @@ class WeeklyPersonalRoutine(Base):
             name='uq_user_week_mission_submission'
         ),
     )
+
 

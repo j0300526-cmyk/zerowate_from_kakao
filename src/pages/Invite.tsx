@@ -1,5 +1,6 @@
 import React from "react";
 import type { Profile, Mission } from "../types";
+import ProfileAvatar from "../components/ProfileAvatar";
 
 interface Props {
   friends: Profile[];
@@ -143,11 +144,21 @@ export default function InvitePage({
                   className="surface flex items-center justify-between gap-3 p-4"
                 >
                   <div className="flex items-center gap-3">
-                    <div
-                      className={`${friend.profileColor || "bg-gray-300"} w-11 h-11 rounded-full flex items-center justify-center text-white font-semibold`}
-                    >
-                      {friend.name.charAt(0)}
-                    </div>
+                    {friend.profileAvatar ? (
+                      <ProfileAvatar
+                        avatar={friend.profileAvatar}
+                        color={friend.profileColor || "bg-gray-300"}
+                        size="xs"
+                        label={`${friend.name}님의 프로필`}
+                      />
+                    ) : (
+                      <div
+                        className={`${friend.profileColor || "bg-gray-300"} w-11 h-11 rounded-full flex items-center justify-center text-white font-semibold`}
+                        aria-label={`${friend.name}님의 프로필`}
+                      >
+                        {friend.name.charAt(0)}
+                      </div>
+                    )}
                     <div>
                       <div className="font-semibold text-sm text-gray-800">{friend.name}</div>
                       <div className="text-xs text-gray-500">{friend.activeDays ?? 0}일째 활동 중</div>

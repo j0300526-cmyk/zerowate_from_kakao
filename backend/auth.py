@@ -87,10 +87,12 @@ def get_current_user(
             email="guest@zero-waste.local",
             name="Guest",
             profile_color="bg-green-300",
+            profile_avatar="sprout",
             bio="Login-free public demo",
         )
         db.add(user)
         db.commit()
         db.refresh(user)
     return user
+
 

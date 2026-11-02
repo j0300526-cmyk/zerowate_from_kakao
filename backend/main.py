@@ -1,7 +1,7 @@
 # FastAPI 메인 애플리케이션
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from database import engine, Base, SessionLocal, ensure_day_mission_schema
+from database import engine, Base, SessionLocal, ensure_day_mission_schema, ensure_user_profile_schema
 from models import CatalogMission, GroupMember, GroupMission, User
 from routers import auth, users, missions, day_missions, group_missions, friends, ranking, utils, personal_routine
 import json
@@ -28,6 +28,7 @@ except Exception as e:
         raise
 
 ensure_day_mission_schema()
+ensure_user_profile_schema()
 
 
 def ensure_demo_data():
@@ -40,6 +41,7 @@ def ensure_demo_data():
                 email="guest@zero-waste.local",
                 name="Guest",
                 profile_color="bg-green-300",
+                profile_avatar="sprout",
                 bio="Login-free public demo",
             )
             db.add(guest)
@@ -135,4 +137,5 @@ async def health_check():
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)
+
 

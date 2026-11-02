@@ -14,7 +14,7 @@ export type AvatarId = (typeof AVATAR_OPTIONS)[number]["id"];
 interface Props {
   avatar?: string;
   color?: string;
-  size?: "sm" | "lg" | "xl";
+  size?: "xs" | "sm" | "md" | "lg" | "xl";
   className?: string;
   label?: string;
 }

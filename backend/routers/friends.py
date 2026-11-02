@@ -47,7 +47,8 @@ async def get_friends(
             id=friend.id,
             name=friend.name,
             activeDays=active_days,
-            profileColor=friend.profile_color
+            profileColor=friend.profile_color,
+            profileAvatar=friend.profile_avatar,
         ))
     
     return result
@@ -124,7 +125,8 @@ async def get_invites(
             id=invite.from_user.id,
             name=invite.from_user.name,
             activeDays=0,  # 계산 필요
-            profileColor=invite.from_user.profile_color
+            profileColor=invite.from_user.profile_color,
+            profileAvatar=invite.from_user.profile_avatar,
         )
         
         result.append(InviteResponse(
@@ -212,4 +214,5 @@ async def decline_invite(
     invite.status = "declined"
     db.commit()
     return {"message": "초대를 거절했습니다"}
+
 

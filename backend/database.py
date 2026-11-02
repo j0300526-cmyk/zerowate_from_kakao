@@ -167,6 +167,31 @@ def ensure_day_mission_schema():
         _ensure_new_unique_index(conn)
 
 
+def ensure_user_profile_schema():
+    """기존 데이터베이스에 프로필 캐릭터 컬럼을 안전하게 추가합니다."""
+    inspector = inspect(engine)
+    if "users" not in inspector.get_table_names():
+        return
+
+    columns = {column["name"] for column in inspector.get_columns("users")}
+    if "profile_avatar" in columns:
+        return
+
+    with engine.begin() as conn:
+        conn.execute(
+            text(
+                "ALTER TABLE users "
+                "ADD COLUMN profile_avatar VARCHAR DEFAULT 'sprout'"
+            )
+        )
+        conn.execute(
+            text(
+                "UPDATE users SET profile_avatar = 'sprout' "
+                "WHERE profile_avatar IS NULL OR profile_avatar = ''"
+            )
+        )
+
+
 # 데이터베이스 세션 의존성 (FastAPI에서 Depends(get_db)로 사용)
 def get_db():
     db = SessionLocal()
@@ -174,3 +199,4 @@ def get_db():
         yield db
     finally:
         db.close()
+

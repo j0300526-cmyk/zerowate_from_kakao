@@ -107,6 +107,7 @@ function App() {
             participant.profile_color ||
             participant.color ||
             "bg-gray-300",
+          profile_avatar: participant.profile_avatar || participant.profileAvatar,
         };
         })
         .filter(Boolean) as GroupParticipant[]
@@ -307,6 +308,7 @@ function App() {
             name: friend.name,
             activeDays: friend.activeDays ?? 0,
             profileColor: friend.profileColor || "bg-gray-300",
+            profileAvatar: friend.profileAvatar,
           }))
         : [];
       setFriends(normalized);
@@ -564,7 +566,7 @@ function App() {
     try {
       await api("/users/me", {
         method: "PUT",
-        body: JSON.stringify({ name, profile_color: color, bio }),
+        body: JSON.stringify({ name, profile_color: color, profile_avatar: avatar, bio }),
       });
       setUserName(name);
       setProfileColor(color);
@@ -1032,6 +1034,7 @@ function App() {
       const me: any = await api("/users/me");
       setUserName(me?.name ?? userName);
       setProfileColor(me?.profile_color ?? profileColor);
+      setProfileAvatar(me?.profile_avatar ?? profileAvatar);
       if (me?.id) {
         setUserId(me.id);
       }
@@ -1168,6 +1171,7 @@ function App() {
               userName={userName}
               profileColor={profileColor}
               profileAvatar={profileAvatar}
+              userId={userId}
               weekDays={weekDays}
               selectedDate={selectedDate}
               setSelectedDate={handleSelectDate}
@@ -1208,6 +1212,8 @@ function App() {
               currentStreak={currentStreak}
               totalMissionsCount={totalMissionsCount}
               userId={userId}
+              profileColor={profileColor}
+              profileAvatar={profileAvatar}
             />
           )}
 
@@ -1263,6 +1269,10 @@ function App() {
         onJoin={joinGroup}
         onLeave={leaveGroup}
         onClose={() => setSelectedGroupMission(null)}
+        currentUserId={userId}
+        userName={userName}
+        profileColor={profileColor}
+        profileAvatar={profileAvatar}
       />
 
       <LeaveConfirmModal

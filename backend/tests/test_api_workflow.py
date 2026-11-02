@@ -60,9 +60,17 @@ def test_authenticated_api_workflow():
     assert client.get("/api/users/random?limit=3", headers=owner_headers).status_code == 200
     assert client.get("/api/friends", headers=owner_headers).status_code == 200
     assert client.get("/api/server/date", headers=owner_headers).status_code == 200
-    assert client.put(
-        "/api/users/me", headers=owner_headers, json={"name": "수정된 사용자"}
-    ).json()["name"] == "수정된 사용자"
+    updated_profile = client.put(
+        "/api/users/me",
+        headers=owner_headers,
+        json={
+            "name": "수정된 사용자",
+            "profile_color": "bg-pink-300",
+            "profile_avatar": "panda",
+        },
+    ).json()
+    assert updated_profile["name"] == "수정된 사용자"
+    assert updated_profile["profile_avatar"] == "panda"
 
     catalog = client.get("/api/missions/catalog", headers=owner_headers)
     assert catalog.status_code == 200
@@ -104,7 +112,11 @@ def test_authenticated_api_workflow():
     )
     assert group.status_code == 200
     group_id = group.json()["id"]
-    assert client.post(f"/api/group-missions/{group_id}/join", headers=owner_headers).status_code == 200
+    joined_group = client.post(
+        f"/api/group-missions/{group_id}/join", headers=owner_headers
+    )
+    assert joined_group.status_code == 200
+    assert joined_group.json()["participants"][0]["profile_avatar"] == "panda"
     assert client.get("/api/group-missions", headers=owner_headers).status_code == 200
     assert client.get(f"/api/group-missions/{group_id}", headers=owner_headers).status_code == 200
     assert client.get("/api/group-missions/recommended", headers=owner_headers).status_code == 200
@@ -135,10 +147,14 @@ def test_authenticated_api_workflow():
         f"/api/invites/{declined_invite['id']}/decline", headers=decliner_headers
     ).status_code == 200
 
-    assert client.get("/api/ranking/personal", headers=owner_headers).status_code == 200
+    personal_ranking = client.get("/api/ranking/personal", headers=owner_headers)
+    assert personal_ranking.status_code == 200
+    owner_ranking = next(item for item in personal_ranking.json() if item["id"] == owner.id)
+    assert owner_ranking["profile_avatar"] == "panda"
     assert client.get("/api/ranking/group", headers=owner_headers).status_code == 200
     assert client.get("/api/ranking/my", headers=owner_headers).status_code == 200
     assert client.delete(f"/api/days/{mission_date}/missions/{mission_id}", headers=owner_headers).status_code == 200
     assert client.delete(f"/api/group-missions/{group_id}/leave", headers=owner_headers).status_code == 200
     assert client.delete(f"/api/group-missions/{group_id}", headers=owner_headers).status_code == 200
     assert client.post("/api/auth/logout", headers=owner_headers).status_code == 200
+

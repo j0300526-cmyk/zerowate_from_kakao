@@ -12,6 +12,7 @@ export const userApi = {
   updateProfile: async (data: {
     name?: string;
     profile_color?: string;
+    profile_avatar?: string;
     bio?: string;
   }): Promise<User> => {
     return request<User>("/users/me", {
@@ -20,4 +21,5 @@ export const userApi = {
     });
   },
 };
+
 

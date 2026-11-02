@@ -1,6 +1,7 @@
 // 그룹 미션 상세 정보와 참여/나가기 동작을 제공하는 모달
 import React from "react";
 import Dialog from "./Dialog";
+import ProfileAvatar from "./ProfileAvatar";
 import { Mission } from "../types";
 
 interface Props {
@@ -9,6 +10,10 @@ interface Props {
   onJoin: (m: Mission) => void;
   onLeave: (id: number) => void;
   onClose: () => void;
+  currentUserId?: number;
+  userName: string;
+  profileColor: string;
+  profileAvatar: string;
 }
 
 export default function GroupDetailModal({
@@ -17,6 +22,10 @@ export default function GroupDetailModal({
   onJoin,
   onLeave,
   onClose,
+  currentUserId,
+  userName,
+  profileColor,
+  profileAvatar,
 }: Props) {
   const lastMission = React.useRef(mission);
   if (mission) lastMission.current = mission;
@@ -31,16 +40,32 @@ export default function GroupDetailModal({
           {displayed.participants.map((participant, index) => {
             const avatarColor = participant.profile_color || displayed.color || "bg-gray-300";
             const initials = participant.name ? participant.name.charAt(0) : "?";
+            const isCurrentUser = currentUserId
+              ? participant.id === currentUserId
+              : participant.name === userName;
+            const participantAvatar = isCurrentUser
+              ? profileAvatar
+              : participant.profile_avatar;
             return (
               <div
                 key={participant.id ?? `${participant.name}-${index}`}
                 className="flex items-center gap-3 p-3 bg-gray-50 rounded-3xl"
               >
-                <div
-                  className={`w-10 h-10 ${avatarColor} rounded-full flex items-center justify-center text-white font-bold`}
-                >
-                  {initials}
-                </div>
+                {participantAvatar ? (
+                  <ProfileAvatar
+                    avatar={participantAvatar}
+                    color={isCurrentUser ? profileColor : avatarColor}
+                    size="xs"
+                    label={`${participant.name}님의 프로필`}
+                  />
+                ) : (
+                  <div
+                    className={`w-10 h-10 ${avatarColor} rounded-full flex items-center justify-center text-white font-bold`}
+                    aria-label={`${participant.name}님의 프로필`}
+                  >
+                    {initials}
+                  </div>
+                )}
                 <span className="text-gray-700">{participant.name}</span>
               </div>
             );

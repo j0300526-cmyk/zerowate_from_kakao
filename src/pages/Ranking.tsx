@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { Trophy, Medal, Award, Crown } from "lucide-react";
 import SegmentedControl from "../components/SegmentedControl";
+import ProfileAvatar from "../components/ProfileAvatar";
 import { rankingApi } from "../api/ranking";
 import type { RankingUser, GroupRanking } from "../api/types";
 
@@ -10,6 +11,8 @@ interface Props {
   currentStreak: number;
   totalMissionsCount: number;
   userId?: number; // 현재 사용자 ID (선택적)
+  profileColor: string;
+  profileAvatar: string;
 }
 
 export default function RankingPage({
@@ -17,6 +20,8 @@ export default function RankingPage({
   currentStreak,
   totalMissionsCount,
   userId,
+  profileColor,
+  profileAvatar,
 }: Props) {
   const [activeTab, setActiveTab] = useState<"personal" | "group">("personal");
   const [personalRankings, setPersonalRankings] = useState<RankingUser[]>([]);
@@ -94,9 +99,12 @@ export default function RankingPage({
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             <div className="relative">
-              <div className="w-16 h-16 bg-green-300 rounded-full flex items-center justify-center text-white text-2xl font-bold">
-                {userName ? userName.charAt(0) : "?"}
-              </div>
+              <ProfileAvatar
+                avatar={profileAvatar}
+                color={profileColor}
+                size="md"
+                label={`${userName || "사용자"}님의 프로필`}
+              />
               <div className="absolute -bottom-1 -right-1 w-7 h-7 bg-white rounded-full flex items-center justify-center border-2 border-green-200 shadow-sm">
                 <span className="text-xs font-bold text-green-600">
                   {myRank > 0 ? `#${myRank}` : "-"}
@@ -165,11 +173,21 @@ export default function RankingPage({
 
                     {/* 프로필 */}
                     <div className="flex items-center gap-3">
-                      <div
-                        className={`w-12 h-12 ${user.profile_color || "bg-gray-300"} rounded-full flex items-center justify-center text-white font-bold text-lg`}
-                      >
-                        {user.name.charAt(0)}
-                      </div>
+                      {user.profile_avatar ? (
+                        <ProfileAvatar
+                          avatar={user.profile_avatar}
+                          color={user.profile_color || "bg-gray-300"}
+                          size="sm"
+                          label={`${user.name}님의 프로필`}
+                        />
+                      ) : (
+                        <div
+                          className={`w-12 h-12 ${user.profile_color || "bg-gray-300"} rounded-full flex items-center justify-center text-white font-bold text-lg`}
+                          aria-label={`${user.name}님의 프로필`}
+                        >
+                          {user.name.charAt(0)}
+                        </div>
+                      )}
                       <div>
                         <div className="font-bold text-gray-800 flex items-center gap-2">
                           {user.name}

@@ -64,6 +64,8 @@ function App() {
   // ===== State =====
   const [userName, setUserName] = useState("");
   const [profileColor, setProfileColor] = useState("bg-green-300");
+  const [profileAvatar, setProfileAvatar] = useState("sprout");
+  const [userBio, setUserBio] = useState("친환경 실천 중!");
   const [userId, setUserId] = useState<number | undefined>(undefined);
   const [missions, setMissions] = useState<MissionsRecord>({});
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
@@ -105,6 +107,7 @@ function App() {
             participant.profile_color ||
             participant.color ||
             "bg-gray-300",
+          profile_avatar: participant.profile_avatar || participant.profileAvatar,
         };
         })
         .filter(Boolean) as GroupParticipant[]
@@ -305,6 +308,7 @@ function App() {
             name: friend.name,
             activeDays: friend.activeDays ?? 0,
             profileColor: friend.profileColor || "bg-gray-300",
+            profileAvatar: friend.profileAvatar,
           }))
         : [];
       setFriends(normalized);
@@ -448,6 +452,14 @@ function App() {
       const color = getVal(colorResult);
       if (color !== null) setProfileColor(color);
 
+      const avatarResult = await safeStorage.get(STORAGE_KEYS.profileAvatar);
+      const avatar = getVal(avatarResult);
+      if (avatar !== null) setProfileAvatar(avatar);
+
+      const bioResult = await safeStorage.get(STORAGE_KEYS.userBio);
+      const storedBio = getVal(bioResult);
+      if (storedBio !== null) setUserBio(storedBio);
+
       const missionsResult = await safeStorage.get(STORAGE_KEYS.missions);
       const missionsRaw = getVal(missionsResult);
       if (missionsRaw !== null) {
@@ -548,17 +560,21 @@ function App() {
   const saveUserProfile = async (
     name: string,
     color: string,
-    bio: string
+    bio: string,
+    avatar: string
   ) => {
     try {
       await api("/users/me", {
         method: "PUT",
-        body: JSON.stringify({ name, profile_color: color, bio }),
+        body: JSON.stringify({ name, profile_color: color, profile_avatar: avatar, bio }),
       });
       setUserName(name);
       setProfileColor(color);
+      setProfileAvatar(avatar);
+      setUserBio(bio);
       await safeStorage.set(STORAGE_KEYS.userName, name);
       await safeStorage.set(STORAGE_KEYS.profileColor, color);
+      await safeStorage.set(STORAGE_KEYS.profileAvatar, avatar);
       await safeStorage.set(STORAGE_KEYS.userBio, bio);
       return true;
     } catch {
@@ -1018,6 +1034,7 @@ function App() {
       const me: any = await api("/users/me");
       setUserName(me?.name ?? userName);
       setProfileColor(me?.profile_color ?? profileColor);
+      setProfileAvatar(me?.profile_avatar ?? profileAvatar);
       if (me?.id) {
         setUserId(me.id);
       }
@@ -1153,6 +1170,8 @@ function App() {
             <HomePage
               userName={userName}
               profileColor={profileColor}
+              profileAvatar={profileAvatar}
+              userId={userId}
               weekDays={weekDays}
               selectedDate={selectedDate}
               setSelectedDate={handleSelectDate}
@@ -1193,6 +1212,8 @@ function App() {
               currentStreak={currentStreak}
               totalMissionsCount={totalMissionsCount}
               userId={userId}
+              profileColor={profileColor}
+              profileAvatar={profileAvatar}
             />
           )}
 
@@ -1219,6 +1240,8 @@ function App() {
               totalMissionsCount={totalMissionsCount}
               currentStreak={currentStreak}
               profileColor={profileColor}
+              profileAvatar={profileAvatar}
+              userBio={userBio}
               onSaveProfile={saveUserProfile}
             />
           )}
@@ -1246,6 +1269,10 @@ function App() {
         onJoin={joinGroup}
         onLeave={leaveGroup}
         onClose={() => setSelectedGroupMission(null)}
+        currentUserId={userId}
+        userName={userName}
+        profileColor={profileColor}
+        profileAvatar={profileAvatar}
       />
 
       <LeaveConfirmModal

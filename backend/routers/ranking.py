@@ -105,7 +105,8 @@ async def get_personal_ranking(
             name=user.name,
             score=score,
             streak=streak,
-            profile_color=user.profile_color
+            profile_color=user.profile_color,
+            profile_avatar=user.profile_avatar,
         ))
     
     # 점수 순으로 정렬
@@ -173,4 +174,5 @@ async def get_my_rank(
         personal_rank=personal_rank,
         group_ranks=group_ranks
     )
+
 

@@ -5,9 +5,11 @@ export const STORAGE_KEYS = {
   userName: "userName",
   userBio: "userBio",
   profileColor: "profileColor",
+  profileAvatar: "profileAvatar",
   myGroupMissions: "myGroupMissions",
 } as const;
 
 export type StorageKey = (typeof STORAGE_KEYS)[keyof typeof STORAGE_KEYS];
+
 
 

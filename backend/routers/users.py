@@ -26,6 +26,8 @@ async def update_profile(
         current_user.name = user_update.name
     if user_update.profile_color is not None:
         current_user.profile_color = user_update.profile_color
+    if user_update.profile_avatar is not None:
+        current_user.profile_avatar = user_update.profile_avatar
     if user_update.bio is not None:
         current_user.bio = user_update.bio
     
@@ -72,8 +74,10 @@ async def get_random_users(
                 name=user.name,
                 activeDays=active_days,
                 profileColor=user.profile_color,
+                profileAvatar=user.profile_avatar,
             )
         )
 
     return results
+
 

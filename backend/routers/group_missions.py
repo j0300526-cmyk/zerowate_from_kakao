@@ -28,6 +28,7 @@ def group_mission_to_response(group: GroupMission, db: Session, checked: Optiona
             id=member.user.id,
             name=member.user.name,
             profile_color=member.user.profile_color,
+            profile_avatar=member.user.profile_avatar,
         )
         for member in group.members
     ]
@@ -338,4 +339,5 @@ async def delete_group(
     db.commit()
     
     return {"message": "그룹이 삭제되었습니다"}
+
 

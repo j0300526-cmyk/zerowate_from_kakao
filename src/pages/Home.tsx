@@ -1,4 +1,5 @@
 import React from "react";
+import ProfileAvatar from "../components/ProfileAvatar";
 import { Plus, X, Leaf } from "lucide-react";
 import SegmentedControl from "../components/SegmentedControl";
 import { CatalogMission, Mission, PersonalMissionEntry, WeekDay } from "../types";
@@ -8,6 +9,8 @@ import { saveDayMissions, loadDayMissions, saveWeeklyRoutineCompletion } from ".
 interface Props {
   userName: string;
   profileColor: string;
+  profileAvatar: string;
+  userId?: number;
   weekDays: WeekDay[];
   selectedDate: string | null;
   setSelectedDate: (d: string) => void;
@@ -30,6 +33,8 @@ interface Props {
 export default function HomePage({
   userName,
   profileColor,
+  profileAvatar,
+  userId,
   weekDays,
   selectedDate,
   setSelectedDate,
@@ -174,8 +179,8 @@ export default function HomePage({
           <h1>오늘의 루틴</h1>
           <p className="page-description">{userName || "사용자"}님, 오늘 실천할 미션을 확인해 보세요.</p>
         </div>
-        <button onClick={onProfileClick} aria-label="내 프로필 보기" className={`profile-avatar ${profileColor}`}>
-          {userName ? userName.charAt(0) : "?"}
+        <button onClick={onProfileClick} aria-label="내 프로필 보기" className="profile-avatar">
+          <ProfileAvatar avatar={profileAvatar} color={profileColor} size="sm" />
         </button>
       </header>
 
@@ -315,12 +320,26 @@ export default function HomePage({
                   <div className="flex items-center gap-3 flex-1">
                     {(() => {
                       const leader = mission.participants[0];
+                      const isCurrentUser = userId
+                        ? leader?.id === userId
+                        : leader?.name === userName;
                       const leaderColor =
                         leader?.profile_color || mission.color || "bg-gray-300";
                       const leaderInitial = leader?.name?.charAt(0) || "G";
-                      return (
+                      const leaderAvatar = isCurrentUser
+                        ? profileAvatar
+                        : leader?.profile_avatar;
+                      return leaderAvatar ? (
+                        <ProfileAvatar
+                          avatar={leaderAvatar}
+                          color={isCurrentUser ? profileColor : leaderColor}
+                          size="sm"
+                          label={`${leader?.name || userName}님의 프로필`}
+                        />
+                      ) : (
                         <div
                           className={`w-12 h-12 ${leaderColor} rounded-full flex items-center justify-center text-white font-bold border-2 border-white shadow`}
+                          aria-label={`${leader?.name || "그룹원"}님의 프로필`}
                         >
                           {leaderInitial}
                         </div>
@@ -382,16 +401,32 @@ export default function HomePage({
                       const fallbackColors = ["bg-gray-300", "bg-gray-400", "bg-gray-500"];
                       const avatarColor =
                         participant?.profile_color || fallbackColors[i % fallbackColors.length];
+                      const isCurrentUser = userId
+                        ? participant?.id === userId
+                        : name === userName;
+                      const participantAvatar = isCurrentUser
+                        ? profileAvatar
+                        : participant?.profile_avatar;
                       return (
                         <div
                           key={participant?.id ?? `${mission.id}-${name}`}
                           className="flex flex-col items-center gap-1"
                         >
-                          <div
-                            className={`w-14 h-14 ${avatarColor} rounded-full flex items-center justify-center text-white font-bold border-2 border-white shadow`}
-                          >
-                            {name.charAt(0)}
-                          </div>
+                          {participantAvatar ? (
+                            <ProfileAvatar
+                              avatar={participantAvatar}
+                              color={isCurrentUser ? profileColor : avatarColor}
+                              size="sm"
+                              label={`${name}님의 프로필`}
+                            />
+                          ) : (
+                            <div
+                              className={`w-14 h-14 ${avatarColor} rounded-full flex items-center justify-center text-white font-bold border-2 border-white shadow`}
+                              aria-label={`${name}님의 프로필`}
+                            >
+                              {name.charAt(0)}
+                            </div>
+                          )}
                           <span className="text-xs font-medium text-gray-700">
                             {name}
                           </span>

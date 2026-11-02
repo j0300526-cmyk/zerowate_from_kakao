@@ -21,6 +21,7 @@ export interface User {
   id: number;
   name: string;
   profile_color: string;
+  profile_avatar: string;
   bio: string;
   email?: string;
 }
@@ -57,6 +58,7 @@ export interface RankingUser {
   score: number;
   streak: number;
   profile_color: string;
+  profile_avatar: string;
 }
 
 export interface Friend {
@@ -64,5 +66,7 @@ export interface Friend {
   name: string;
   activeDays: number;
   profileColor?: string;
+  profileAvatar?: string;
 }
+
 

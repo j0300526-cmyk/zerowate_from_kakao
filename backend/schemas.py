@@ -1,6 +1,6 @@
 # Pydantic 스키마 (요청/응답 모델)
 from pydantic import BaseModel, ConfigDict, EmailStr
-from typing import Optional, List
+from typing import Optional, List, Literal
 from datetime import date, datetime
 
 # ===== 인증 =====
@@ -19,9 +19,12 @@ class KakaoCallbackRequest(BaseModel):
     code: str
 
 # ===== 사용자 =====
+ProfileAvatar = Literal["sprout", "cat", "dog", "rabbit", "bear", "panda"]
+
 class UserBase(BaseModel):
     name: str
     profile_color: Optional[str] = "bg-green-300"
+    profile_avatar: Optional[ProfileAvatar] = "sprout"
     bio: Optional[str] = "친환경 실천 중!"
 
 class UserCreate(UserBase):
@@ -31,6 +34,7 @@ class UserCreate(UserBase):
 class UserUpdate(BaseModel):
     name: Optional[str] = None
     profile_color: Optional[str] = None
+    profile_avatar: Optional[ProfileAvatar] = None
     bio: Optional[str] = None
 
 class UserResponse(UserBase):
@@ -88,6 +92,7 @@ class GroupParticipantResponse(BaseModel):
     id: int
     name: str
     profile_color: Optional[str] = None
+    profile_avatar: Optional[str] = None
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -120,6 +125,7 @@ class FriendResponse(BaseModel):
     name: str
     activeDays: int
     profileColor: Optional[str] = None
+    profileAvatar: Optional[str] = None
     
     model_config = ConfigDict(from_attributes=True)
 
@@ -141,6 +147,7 @@ class RankingUserResponse(BaseModel):
     score: int
     streak: int
     profile_color: str
+    profile_avatar: str
     
     model_config = ConfigDict(from_attributes=True)
 
@@ -164,4 +171,5 @@ class WeeklyPersonalRoutineResponse(BaseModel):
     created_at: datetime
     
     model_config = ConfigDict(from_attributes=True)
+
 

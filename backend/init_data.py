@@ -1,7 +1,13 @@
 # 초기 데이터 삽입 스크립트
 import json
 
-from database import Base, SessionLocal, engine, ensure_day_mission_schema
+from database import (
+    Base,
+    SessionLocal,
+    engine,
+    ensure_day_mission_schema,
+    ensure_user_profile_schema,
+)
 from models import CatalogMission, User
 from models import GroupMission, GroupMember
 from auth import get_password_hash
@@ -11,6 +17,7 @@ def initialize_database():
     """Create the schema before inserting local sample data."""
     Base.metadata.create_all(bind=engine, checkfirst=True)
     ensure_day_mission_schema()
+    ensure_user_profile_schema()
 
 def init_catalog_missions():
     """미션 카탈로그 초기 데이터"""
@@ -65,6 +72,7 @@ def init_test_user():
             password_hash=password_hash,
             name="테스트 사용자",
             profile_color="bg-green-300",
+            profile_avatar="sprout",
             bio="테스트 계정입니다"
         )
         db.add(user)
@@ -124,4 +132,5 @@ if __name__ == "__main__":
     init_test_user()
     init_group_missions()
     print("완료되었습니다!")
+
 

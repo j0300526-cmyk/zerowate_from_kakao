@@ -3,6 +3,7 @@ export interface GroupParticipant {
   id: number;
   name: string;
   profile_color?: string;
+  profile_avatar?: string;
 }
 
 export interface Mission {
@@ -38,7 +39,13 @@ export interface CatalogMission {
   // 문자열 검색 편의를 위한 예시 속성(있을 수 있음)
   example?: string;
 }
-export interface Profile { id: number; name: string; activeDays: number; profileColor?: string }
+export interface Profile {
+  id: number;
+  name: string;
+  activeDays: number;
+  profileColor?: string;
+  profileAvatar?: string;
+}
 export interface PersonalMissionEntry {
   missionId: number;
   submission: string;

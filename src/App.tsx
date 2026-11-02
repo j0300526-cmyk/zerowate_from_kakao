@@ -139,6 +139,7 @@ function App() {
   const [recommendedGroupMissions, setRecommendedGroupMissions] = useState<Mission[]>([]);
   const [leaveTarget, setLeaveTarget] = useState<Mission | null>(null);
   const [errorMessage, setErrorMessage] = useState<string>("");
+  const [messageTone, setMessageTone] = useState<"error" | "success">("error");
   const [dayCompletionMap, setDayCompletionMap] = useState<
     Record<string, DayCompletionSummary>
   >({});
@@ -171,6 +172,12 @@ function App() {
 
   // ===== 헬퍼 함수들 =====
   const showError = useCallback((message: string) => {
+    setMessageTone("error");
+    setErrorMessage(message);
+    setTimeout(() => setErrorMessage(""), 3000);
+  }, []);
+  const showSuccess = useCallback((message: string) => {
+    setMessageTone("success");
     setErrorMessage(message);
     setTimeout(() => setErrorMessage(""), 3000);
   }, []);
@@ -706,7 +713,7 @@ function App() {
         return false;
       }
 
-      showError("주간 루틴이 추가되었어요!");
+      showSuccess("주간 루틴이 추가되었어요!");
 
       // 현재 주의 모든 날짜의 미션 다시 로드
       if (weekDays && weekDays.length > 0) {
@@ -810,7 +817,7 @@ function App() {
         return;
       }
 
-      showError("주간 루틴이 추가되었어요!");
+      showSuccess("주간 루틴이 추가되었어요!");
       // 모든 날짜의 미션 다시 로드 (주간 루틴이 모든 날짜에 표시되도록)
       if (selectedDate) {
         await loadDay(selectedDate, { force: true });
@@ -908,7 +915,7 @@ function App() {
         console.warn("추천 그룹 목록 새로고침 실패", err);
       }
       
-      showError("그룹이 생성되고 참여되었어요!");
+      showSuccess("그룹이 생성되고 참여되었어요!");
     } catch (error: any) {
       const status = (error as any)?.status;
       if (status === 400) {
@@ -939,7 +946,7 @@ function App() {
         setSelectedGroupMission(null);
       }
       
-      showError("그룹이 삭제되었어요");
+      showSuccess("그룹이 삭제되었어요");
     } catch (error: any) {
       const status = (error as any)?.status;
       if (status === 403) {
@@ -984,7 +991,7 @@ function App() {
     try {
       setSendingInvites(true);
       await friendApi.sendInvite(selectedInviteGroupId, selectedInvitees);
-      showError("초대를 보냈어요!");
+      showSuccess("초대를 보냈어요!");
       setSelectedInvitees([]);
     } catch (error: any) {
       console.error("초대 전송 실패:", error);
@@ -1160,7 +1167,7 @@ function App() {
         <div className="brand"><Leaf size={23} aria-hidden="true" /><span>Zero Waste<span className="brand-detail">Routine</span></span></div>
         <span className="brand-note">작은 실천, 더 나은 내일</span>
       </header>
-      <ErrorToast message={errorMessage} />
+      <ErrorToast message={errorMessage} tone={messageTone} />
 
       <div
         className="app-content"

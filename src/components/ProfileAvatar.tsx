@@ -11,6 +11,14 @@ export const AVATAR_OPTIONS = [
 
 export type AvatarId = (typeof AVATAR_OPTIONS)[number]["id"];
 
+const SIZE_CLASS = {
+  xs: "cute-avatar-xs",
+  sm: "cute-avatar-sm",
+  md: "cute-avatar-md",
+  lg: "cute-avatar-lg",
+  xl: "cute-avatar-xl",
+} as const;
+
 interface Props {
   avatar?: string;
   color?: string;
@@ -34,7 +42,7 @@ export default function ProfileAvatar({
 
   return (
     <span
-      className={`cute-avatar cute-avatar-${size} ${color} ${className}`.trim()}
+      className={`cute-avatar ${SIZE_CLASS[size]} ${color} ${className}`.trim()}
       role={label ? "img" : undefined}
       aria-label={label}
       aria-hidden={label ? undefined : true}

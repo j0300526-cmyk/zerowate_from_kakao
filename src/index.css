@@ -48,7 +48,7 @@
   .page-header > div { min-width: 0; }
   .eyebrow { font-size: .75rem; font-weight: 650; letter-spacing: .03em; color: var(--accent); margin-bottom: .45rem; }
   .page-description { font-size: .875rem; line-height: 1.6; color: var(--muted); margin-top: .65rem; }
-  .profile-avatar { width: 3.25rem; height: 3.25rem; flex-shrink: 0; border-radius: 50%; display: grid; place-items: center; border: 0; background: transparent; }
+  .profile-avatar { width: 4.25rem; height: 4.25rem; flex-shrink: 0; border-radius: 50%; display: grid; place-items: center; border: 0; background: transparent; }
   .cute-avatar { flex-shrink: 0; display: inline-grid; place-items: center; border-radius: 50%; border: 3px solid white; box-shadow: 0 3px 14px #243e2520; overflow: hidden; transition: background-color 180ms ease, transform 180ms var(--ease-out); }
   .cute-avatar-xs { width: 2.5rem; height: 2.5rem; font-size: 1.35rem; }
   .cute-avatar-sm { width: 3rem; height: 3rem; font-size: 1.7rem; }
@@ -121,7 +121,9 @@
   .sheet-heading p { color: var(--muted); font-size: .85rem; margin-top: .5rem; }
   .sheet-content { padding: 0 1.5rem max(1.5rem, env(safe-area-inset-bottom)); }
   .sheet-content button { min-height: 2.75rem; }
-  .error-toast { position: fixed; z-index: 50; top: 1rem; left: 50%; display: flex; align-items: center; gap: .5rem; width: max-content; max-width: calc(100% - 2rem); padding: .75rem 1.25rem; border-radius: 1rem; background: #c63f39; color: white; box-shadow: 0 12px 30px #6c211f30; font-size: .875rem; opacity: 1; transform: translateX(-50%); transition: opacity 180ms ease, transform 180ms var(--ease-out); }
+  .error-toast { position: fixed; z-index: 50; top: 1rem; left: 50%; display: flex; align-items: center; gap: .5rem; width: max-content; max-width: calc(100% - 2rem); padding: .75rem 1.25rem; border-radius: 1rem; color: white; font-size: .875rem; opacity: 1; transform: translateX(-50%); transition: opacity 180ms ease, transform 180ms var(--ease-out); }
+  .error-toast-error { background: #c63f39; box-shadow: 0 12px 30px #6c211f30; }
+  .error-toast-success { background: var(--accent); box-shadow: 0 12px 30px #174c3430; }
   @starting-style { .error-toast { opacity: 0; transform: translate(-50%, -.75rem); } }
   .skip-link { position: fixed; top: .5rem; left: .5rem; z-index: 60; padding: .75rem 1rem; color: white; background: var(--accent); border-radius: .75rem; transform: translateY(-200%); }
   .skip-link:focus { transform: none; }

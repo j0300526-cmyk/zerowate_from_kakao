@@ -27,10 +27,12 @@ export default function AddMissionModal({
     categoryId: null,
     selectedSubMissions: [],
   });
+  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     if (!visible) {
       setSelection({ categoryId: null, selectedSubMissions: [] });
+      setSubmitting(false);
     }
   }, [visible]);
 
@@ -129,19 +131,30 @@ export default function AddMissionModal({
             취소
           </button>
           <button
-            onClick={() => {
+            onClick={async () => {
               if (selection.categoryId && selection.selectedSubMissions.length > 0) {
-                onAdd({
-                  missionIds: selection.selectedSubMissions.map((s) => s.id),
-                });
+                setSubmitting(true);
+                try {
+                  await onAdd({
+                    missionIds: selection.selectedSubMissions.map((s) => s.id),
+                  });
+                } finally {
+                  setSubmitting(false);
+                }
               }
             }}
             disabled={
-              !selection.categoryId || selection.selectedSubMissions.length === 0 || loading
+              !selection.categoryId || selection.selectedSubMissions.length === 0 || loading || submitting
             }
             className="dialog-action dialog-action-primary"
           >
-            {loading ? "불러오는 중…" : selection.selectedSubMissions.length ? `${selection.selectedSubMissions.length}개 추가하기` : "미션 추가하기"}
+            {loading
+              ? "불러오는 중…"
+              : submitting
+                ? "추가 중…"
+                : selection.selectedSubMissions.length
+                  ? `${selection.selectedSubMissions.length}개 추가하기`
+                  : "미션 추가하기"}
           </button>
         </div>
     </Dialog>

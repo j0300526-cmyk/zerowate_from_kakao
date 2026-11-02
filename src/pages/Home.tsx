@@ -180,7 +180,7 @@ export default function HomePage({
           <p className="page-description">{userName || "사용자"}님, 오늘 실천할 미션을 확인해 보세요.</p>
         </div>
         <button onClick={onProfileClick} aria-label="내 프로필 보기" className="profile-avatar">
-          <ProfileAvatar avatar={profileAvatar} color={profileColor} size="sm" />
+          <ProfileAvatar avatar={profileAvatar} color={profileColor} size="md" />
         </button>
       </header>
 
